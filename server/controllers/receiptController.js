@@ -89,6 +89,7 @@ export const getReceipts = async (req, res) => {
     const query = { user: req.user.id }; // Seguridad Base
 
     if (companyId) query.company = companyId;
+    if (req.query.employeeId) query.employee = req.query.employeeId;
     if (mes) query['periodo.mes'] = mes;
     if (anio) query['periodo.anio'] = anio;
 

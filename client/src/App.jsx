@@ -9,6 +9,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import CompanyListPage from './pages/dashboard/CompanyListPage';
 import EmployeeListPage from './pages/dashboard/EmployeeListPage';
+import EmployeeDetailPage from './pages/dashboard/EmployeeDetailPage';
 import CreateReceiptPage from './pages/dashboard/CreateReceiptPage';
 import ReceiptListPage from './pages/dashboard/ReceiptListPage';
 import ReceiptPreviewPage from './pages/dashboard/ReceiptPreviewPage';
@@ -65,6 +66,7 @@ function App() {
             <Route index element={<DashboardHome />} />
             <Route path="companies" element={<CompanyListPage />} />
             <Route path="employees" element={<EmployeeListPage />} />
+            <Route path="employees/:id" element={<EmployeeDetailPage />} />
             <Route path="receipts" element={<ReceiptListPage />} />
             <Route path="receipts/new" element={<CreateReceiptPage />} />
             <Route path="receipts/:id/preview" element={<ReceiptPreviewPage />} />

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Search, Edit, Trash2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const EmployeeTable = ({ employees, onEdit, onDelete }) => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -47,7 +48,9 @@ const EmployeeTable = ({ employees, onEdit, onDelete }) => {
                                 <tr key={emp._id} className="hover:bg-blue-50/30 transition-colors">
                                     <td className="p-4 font-mono text-gray-600 font-medium">{emp.legajo}</td>
                                     <td className="p-4">
-                                        <div className="font-bold text-[#0F2C4C]">{emp.apellido}, {emp.nombre}</div>
+                                        <Link to={`/dashboard/employees/${emp._id}`} className="font-bold text-[#0F2C4C] hover:text-blue-600 hover:underline cursor-pointer">
+                                            {emp.apellido}, {emp.nombre}
+                                        </Link>
                                     </td>
                                     <td className="p-4 text-gray-600">{emp.cuil}</td>
                                     <td className="p-4 text-gray-600">{emp.cargo}</td>

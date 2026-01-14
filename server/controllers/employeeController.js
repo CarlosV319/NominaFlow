@@ -54,3 +54,20 @@ export const getEmployees = async (req, res) => {
         data: employees
     });
 };
+
+// @desc    Obtener un empleado por ID
+// @route   GET /api/employees/:id
+// @access  Private
+export const getEmployeeById = async (req, res) => {
+    const employee = await Employee.findOne({ _id: req.params.id, user: req.user.id })
+        .populate('company', 'razonSocial');
+
+    if (!employee) {
+        throw new AppError('Empleado no encontrado', 404);
+    }
+
+    res.status(200).json({
+        status: 'success',
+        data: employee
+    });
+};

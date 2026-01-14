@@ -38,8 +38,21 @@ export const deleteEmployee = createAsyncThunk(
     }
 );
 
+export const fetchEmployeeById = createAsyncThunk(
+    'employees/fetchById',
+    async (id, { rejectWithValue }) => {
+        try {
+            const response = await api.get(`/employees/${id}`);
+            return response.data.data;
+        } catch (err) {
+            return rejectWithValue(err.response?.data?.message || 'Error al cargar empleado');
+        }
+    }
+);
+
 const initialState = {
     employees: [],
+    selectedEmployee: null, // For detail view
     loading: false,
     error: null,
 };
@@ -50,12 +63,13 @@ const employeeSlice = createSlice({
     reducers: {
         clearEmployeeState: (state) => {
             state.employees = [];
+            state.selectedEmployee = null;
             state.error = null;
         }
     },
     extraReducers: (builder) => {
         builder
-            // Fetch
+            // Fetch List
             .addCase(fetchEmployees.pending, (state) => {
                 state.loading = true;
                 state.error = null;
@@ -65,6 +79,19 @@ const employeeSlice = createSlice({
                 state.employees = action.payload;
             })
             .addCase(fetchEmployees.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            // Fetch Single
+            .addCase(fetchEmployeeById.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(fetchEmployeeById.fulfilled, (state, action) => {
+                state.loading = false;
+                state.selectedEmployee = action.payload;
+            })
+            .addCase(fetchEmployeeById.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             })
@@ -84,6 +111,9 @@ const employeeSlice = createSlice({
             // Delete
             .addCase(deleteEmployee.fulfilled, (state, action) => {
                 state.employees = state.employees.filter(e => e._id !== action.payload);
+                if (state.selectedEmployee?._id === action.payload) {
+                    state.selectedEmployee = null;
+                }
             });
     },
 });
