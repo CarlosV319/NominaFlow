@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+
+    /* Custom Centralized Container */
+    .layout-container {
+        @apply w-[90%] md:w-[80%] mx-auto;
+    }
+}
