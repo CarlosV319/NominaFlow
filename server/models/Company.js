@@ -20,11 +20,8 @@ const companySchema = new mongoose.Schema({
         match: [/^\d{11}$/, 'El CUIT debe contener solo 11 números']
     },
     domicilio: {
-        calle: { type: String, required: true },
-        altura: { type: String, required: true },
-        piso: { type: String },
-        cp: { type: String, required: true },
-        localidad: { type: String, required: true }
+        type: String,
+        required: [true, 'El domicilio es requerido']
     },
     inicioActividades: {
         type: Date

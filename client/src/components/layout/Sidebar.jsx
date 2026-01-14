@@ -5,10 +5,10 @@ import { LayoutDashboard, Building, Users, FileText, Settings, X, Building2 } fr
 const Sidebar = ({ isOpen, onClose }) => {
     const navItems = [
         { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-        { name: 'Mis Empresas', path: '/companies', icon: Building },
-        { name: 'Empleados', path: '/employees', icon: Users },
-        { name: 'Recibos', path: '/receipts', icon: FileText },
-        { name: 'Configuración', path: '/settings', icon: Settings },
+        { name: 'Mis Empresas', path: '/dashboard/companies', icon: Building },
+        { name: 'Empleados', path: '/dashboard/employees', icon: Users },
+        { name: 'Recibos', path: '/dashboard/receipts', icon: FileText },
+        { name: 'Configuración', path: '/dashboard/settings', icon: Settings },
     ];
 
     const sidebarContent = (

@@ -8,6 +8,7 @@ import PricingPage from './pages/PricingPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import CompanyListPage from './pages/dashboard/CompanyListPage';
+import EmployeeListPage from './pages/dashboard/EmployeeListPage';
 
 // Placeholder Pages (Temporary)
 const Home = () => (
@@ -60,7 +61,7 @@ function App() {
           <Route path="/dashboard" element={<DashboardLayout />}>
             <Route index element={<DashboardHome />} />
             <Route path="companies" element={<CompanyListPage />} />
-            {/* Future routes: /dashboard/employees */}
+            <Route path="employees" element={<EmployeeListPage />} />
           </Route>
 
           {/* Fallback */}

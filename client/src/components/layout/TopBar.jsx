@@ -32,13 +32,13 @@ const TopBar = ({ onMenuClick }) => {
                     <button className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-200">
                         <div className="w-8 h-8 bg-brand-primary/10 rounded-lg flex items-center justify-center text-brand-primary">
                             <span className="font-bold text-sm">
-                                {activeCompany ? activeCompany.name.substring(0, 2).toUpperCase() : '+'}
+                                {activeCompany ? activeCompany.razonSocial?.substring(0, 2).toUpperCase() : '+'}
                             </span>
                         </div>
                         <div className="text-left hidden sm:block">
                             <p className="text-xs text-gray-500 font-medium">Empresa Activa</p>
                             <h3 className="text-sm font-bold text-gray-800 flex items-center">
-                                {activeCompany ? activeCompany.name : 'Seleccionar Empresa'}
+                                {activeCompany ? activeCompany.razonSocial : 'Seleccionar Empresa'}
                                 <ChevronDown size={14} className="ml-1 text-gray-400" />
                             </h3>
                         </div>

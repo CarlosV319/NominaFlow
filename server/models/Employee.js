@@ -53,6 +53,11 @@ const employeeSchema = new mongoose.Schema({
     },
     banco: {
         type: String
+    },
+    sueldoBruto: {
+        type: Number,
+        required: [true, 'El sueldo bruto es requerido'],
+        min: 0
     }
 }, {
     timestamps: true

@@ -5,16 +5,23 @@ import AppError from '../utils/AppError.js';
 // @route   POST /api/companies
 // @access  Private
 export const createCompany = async (req, res) => {
-    // Seguridad: Asigna automáticamente el usuario dueño
-    const company = await Company.create({
-        ...req.body,
-        user: req.user.id
-    });
+    try {
+        console.log('Creating Company with body:', req.body);
+        console.log('User ID:', req.user.id);
 
-    res.status(201).json({
-        status: 'success',
-        data: company
-    });
+        const company = await Company.create({
+            ...req.body,
+            user: req.user.id
+        });
+
+        res.status(201).json({
+            status: 'success',
+            data: company
+        });
+    } catch (error) {
+        console.error('Create Company Error:', error);
+        throw error; // Let global handler catch it
+    }
 };
 
 // @desc    Obtener todas las empresas del usuario
