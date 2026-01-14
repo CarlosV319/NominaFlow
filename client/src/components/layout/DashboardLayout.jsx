@@ -1,10 +1,21 @@
-import React, { useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
+import { useAppSelector } from '../../hooks/useRedux';
 import Sidebar from './Sidebar';
 import TopBar from './TopBar';
 
 const DashboardLayout = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const { isAuthenticated, loading } = useAppSelector((state) => state.auth);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!loading && !isAuthenticated) {
+            navigate('/login');
+        }
+    }, [isAuthenticated, loading, navigate]);
+
+    if (!isAuthenticated) return null; // Avoid flashing protected content
 
     return (
         <div className="min-h-screen bg-[#F8FAFC]">
