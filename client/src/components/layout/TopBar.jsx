@@ -9,6 +9,7 @@ const TopBar = ({ onMenuClick }) => {
     const { user } = useAppSelector((state) => state.auth);
     const { activeCompany } = useAppSelector((state) => state.company);
 
+    const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
     const navigate = useNavigate();
 
     const handleLogout = () => {
