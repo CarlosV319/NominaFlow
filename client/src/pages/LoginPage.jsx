@@ -60,6 +60,7 @@ const LoginPage = () => {
                     placeholder="tu@email.com"
                     register={register}
                     error={errors.email}
+                    autoComplete="email"
                 />
 
                 <InputGroup
@@ -69,6 +70,7 @@ const LoginPage = () => {
                     placeholder="••••••••"
                     register={register}
                     error={errors.password}
+                    autoComplete="current-password"
                 />
 
                 <div className="flex items-center justify-between text-xs text-gray-500 mb-4">

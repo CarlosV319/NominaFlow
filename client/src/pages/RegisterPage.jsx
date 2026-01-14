@@ -97,6 +97,7 @@ const RegisterPage = () => {
                     placeholder="tu@email.com"
                     register={register}
                     error={errors.email}
+                    autoComplete="email"
                 />
 
                 <InputGroup
@@ -106,6 +107,7 @@ const RegisterPage = () => {
                     placeholder="••••••••"
                     register={register}
                     error={errors.password}
+                    autoComplete="new-password"
                 />
 
                 <InputGroup
@@ -115,6 +117,7 @@ const RegisterPage = () => {
                     placeholder="••••••••"
                     register={register}
                     error={errors.confirmPassword}
+                    autoComplete="new-password"
                 />
 
                 <button

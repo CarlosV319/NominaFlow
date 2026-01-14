@@ -8,6 +8,7 @@ const InputGroup = ({
     register,
     error,
     disabled = false,
+    autoComplete,
 }) => {
     return (
         <div className="mb-4">
@@ -24,6 +25,7 @@ const InputGroup = ({
                 type={type}
                 placeholder={placeholder}
                 disabled={disabled}
+                autoComplete={autoComplete}
                 {...register(name)}
                 className={`w-full px-4 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 transition-colors duration-200 
           ${error
