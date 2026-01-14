@@ -7,7 +7,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
         { name: 'Mis Empresas', path: '/dashboard/companies', icon: Building },
         { name: 'Empleados', path: '/dashboard/employees', icon: Users },
-        { name: 'Recibos', path: '/dashboard/receipts', icon: FileText },
+        { name: 'Nuevo Recibo', path: '/dashboard/receipts/new', icon: FileText },
         { name: 'Configuración', path: '/dashboard/settings', icon: Settings },
     ];
 

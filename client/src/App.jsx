@@ -9,6 +9,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import CompanyListPage from './pages/dashboard/CompanyListPage';
 import EmployeeListPage from './pages/dashboard/EmployeeListPage';
+import CreateReceiptPage from './pages/dashboard/CreateReceiptPage';
 
 // Placeholder Pages (Temporary)
 const Home = () => (
@@ -62,6 +63,7 @@ function App() {
             <Route index element={<DashboardHome />} />
             <Route path="companies" element={<CompanyListPage />} />
             <Route path="employees" element={<EmployeeListPage />} />
+            <Route path="receipts/new" element={<CreateReceiptPage />} />
           </Route>
 
           {/* Fallback */}
