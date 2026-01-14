@@ -2,19 +2,21 @@ import React, { useState } from 'react';
 import { useAppSelector, useAppDispatch } from '../../hooks/useRedux';
 import { logout } from '../../store/slices/authSlice';
 import { Menu, ChevronDown, User, LogOut, AlignLeft } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const TopBar = ({ onMenuClick }) => {
     const dispatch = useAppDispatch();
     const { user } = useAppSelector((state) => state.auth);
     const { activeCompany } = useAppSelector((state) => state.company);
 
-    // Simple local state for dropdowns (could use a library like Headless UI)
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+    const navigate = useNavigate();
+
+    const navigate = useNavigate(); // Add this hook at the top level of component
 
     const handleLogout = () => {
         dispatch(logout());
-        // Reload or redirect usually handled by App.jsx auth listener
+        navigate('/login');
     };
 
     return (
