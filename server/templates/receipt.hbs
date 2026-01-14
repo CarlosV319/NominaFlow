@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recibo de Sueldo</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+
+        :root {
+            --primary-color: #2563eb; /* Azul corporativo moderno */
+            --text-dark: #1f2937;
+            --text-gray: #6b7280;
+            --bg-zebra: #f9fafb;
+            --border-light: #e5e7eb;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: var(--text-dark);
+            margin: 0;
+            padding: 0;
+            font-size: 12px; /* Base size para A4 */
+            box-sizing: border-box;
+            background: white;
+        }
+
+        /* Layout A4 Landscape */
+        .page {
+            width: 297mm;
+            height: 210mm;
+            padding: 15mm;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Watermark */
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 120px;
+            color: rgba(220, 38, 38, 0.1); /* Rojo muy tenue */
+            font-weight: bold;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .logo-area {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-img {
+            height: 40px; /* Placeholder para logo real */
+            /* width: auto; */
+        }
+
+        .period-area {
+            text-align: right;
+        }
+
+        .period-label {
+            font-size: 10px;
+            color: var(--text-gray);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .period-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        /* Info Grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px 20px;
+            margin-bottom: 25px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            font-size: 10px;
+            color: var(--text-gray);
+            margin-bottom: 2px;
+        }
+
+        .info-value {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* Concepts Table */
+        .concepts-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: auto; /* Empuja el footer hacia abajo */
+        }
+
+        .concepts-table th {
+            background-color: #f3f4f6;
+            color: var(--text-gray);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 10px;
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .concepts-table th.amount-col {
+            text-align: right;
+            width: 12%;
+        }
+
+        .concepts-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border-light);
+            font-size: 12px;
+        }
+
+        .concepts-table tr:nth-child(even) {
+            background-color: var(--bg-zebra);
+        }
+
+        .concepts-table td.amount {
+            text-align: right;
+            font-family: 'Courier New', Courier, monospace; /* Monospaced para alinear números */
+            font-weight: 500;
+        }
+
+        /* Totals Block */
+        .totals-section {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+            border-top: 2px solid var(--text-dark);
+            padding-top: 15px;
+        }
+
+        .totals-grid {
+            display: grid;
+            grid-template-columns: auto auto;
+            gap: 10px 30px;
+            text-align: right;
+        }
+
+        .total-row-label {
+            color: var(--text-gray);
+            font-size: 12px;
+        }
+
+        .total-row-value {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .net-pay-block {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            margin-left: 30px;
+            text-align: center;
+        }
+
+        .net-pay-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            opacity: 0.9;
+        }
+
+        .net-pay-value {
+            font-size: 24px;
+            font-weight: 700;
+            margin-top: 2px;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+            padding-top: 20px;
+        }
+
+        .signature-box {
+            width: 40%;
+            border-top: 1px dashed var(--text-gray);
+            text-align: center;
+            padding-top: 8px;
+        }
+
+        .signature-label {
+            font-size: 10px;
+            color: var(--text-gray);
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        {{#unless isFinal}}
+        <div class="watermark">BORRADOR</div>
+        {{/unless}}
+
+        <header>
+            <div class="logo-area">
+                <!-- <img src="{{company.logoUrl}}" alt="Logo" class="logo-img" /> -->
+                <span>{{company.razonSocial}}</span>
+            </div>
+            <div class="period-area">
+                <div class="period-label">Periodo de Liquidación</div>
+                <div class="period-value">{{periodo}}</div>
+            </div>
+        </header>
+
+        <section class="info-grid">
+            <!-- Columna 1: Empresa -->
+            <div class="info-item">
+                <span class="info-label">CUIT Empleador</span>
+                <span class="info-value">{{company.cuit}}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Domicilio</span>
+                <span class="info-value">{{company.domicilio}}</span>
+            </div>
+            
+            <!-- Columna 2: Empleado -->
+             <div class="info-item">
+                <span class="info-label">Legajo</span>
+                <span class="info-value">{{employee.legajo}}</span>
+            </div>
+             <div class="info-item">
+                <span class="info-label">CUIL Empleado</span>
+                <span class="info-value">{{employee.cuil}}</span>
+            </div>
+
+            <!-- Columna 3: Empleado Detalles -->
+            <div class="info-item">
+                <span class="info-label">Apellido y Nombre</span>
+                <span class="info-value">{{employee.fullName}}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Cargo / Puesto</span>
+                <span class="info-value">{{employee.cargo}}</span>
+            </div>
+
+            <!-- Columna 4: Fechas y Banco -->
+            <div class="info-item">
+                <span class="info-label">Fecha Ingreso</span>
+                <span class="info-value">{{employee.fechaIngreso}}</span>
+            </div>
+             <div class="info-item">
+                <span class="info-label">Banco / CBU</span>
+                <span class="info-value">{{employee.bankInfo}}</span>
+            </div>
+        </section>
+
+        <table class="concepts-table">
+            <thead>
+                <tr>
+                    <th style="width: 8%;">Cód.</th>
+                    <th>Concepto</th>
+                    <th style="width: 8%; text-align: center;">Unid.</th>
+                    <th class="amount-col">Haberes C/A</th>
+                    <th class="amount-col">Haberes S/A</th>
+                    <th class="amount-col">Deducciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each items}}
+                <tr>
+                    <td>{{this.codigo}}</td>
+                    <td>{{this.concepto}}</td>
+                    <td style="text-align: center;">{{this.unidades}}</td>
+                    <td class="amount">{{fmtCurrency this.montoRemunerativo}}</td>
+                    <td class="amount">{{fmtCurrency this.montoNoRemunerativo}}</td>
+                    <td class="amount">{{fmtCurrency this.montoDeduccion}}</td>
+                </tr>
+                {{/each}}
+                
+                <!-- Relleno de filas vacías para mantener estructura visual si son pocos items -->
+                <!-- Se podría hacer con JS o CSS min-height, pero filas vacías se ven 'clásicas' -->
+            </tbody>
+        </table>
+
+        <div class="totals-section">
+            <div class="totals-grid">
+                <span class="total-row-label">Total Remunerativo</span>
+                <span class="total-row-value">{{fmtCurrency totals.bruto}}</span>
+
+                <span class="total-row-label">Total No Remunerativo</span>
+                <span class="total-row-value">{{fmtCurrency totals.noRemunerativo}}</span>
+
+                <span class="total-row-label">Total Deducciones</span>
+                <span class="total-row-value">- {{fmtCurrency totals.descuentos}}</span>
+            </div>
+
+            <div class="net-pay-block">
+                <div class="net-pay-label">Neto a Cobrar</div>
+                <div class="net-pay-value">{{fmtCurrency totals.neto}}</div>
+            </div>
+        </div>
+
+        <footer>
+            <div class="signature-box">
+                <div class="signature-label">Firma del Empleador</div>
+            </div>
+            <div class="signature-box">
+                <div class="signature-label">Firma del Empleado</div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
