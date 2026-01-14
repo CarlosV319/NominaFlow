@@ -47,10 +47,13 @@ app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(cookieParser());
 
 // Data sanitization against NoSQL query injection
-app.use(mongoSanitize());
+// app.use(mongoSanitize());
 
 // CORS Policy
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+}));
 
 // --- Routes Mounting ---
 app.use('/api/v1/auth', authRoutes);
@@ -76,6 +79,7 @@ app.use((err, req, res, next) => {
     err.status = err.status || 'error';
 
     if (process.env.NODE_ENV === 'development') {
+        console.error('DEV ERROR 💥', err); // Added log
         res.status(err.statusCode).json({
             status: err.status,
             error: err,
@@ -103,4 +107,5 @@ const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
     console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+    console.log(`MONGO_URI present: ${!!process.env.MONGO_URI}`);
 });

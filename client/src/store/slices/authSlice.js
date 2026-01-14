@@ -1,15 +1,15 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import api from '../../api/axios';
 
 // Thunks
 export const registerUser = createAsyncThunk(
     'auth/register',
     async (userData, { rejectWithValue }) => {
         try {
-            // Mock API call or real one if proxy is ready. Assuming /api/v1/auth/register exists.
-            const response = await axios.post('/api/v1/auth/register', userData);
+            const response = await api.post('/auth/register', userData);
             return response.data; // Expected { status, data: { user, token } }
         } catch (err) {
+            console.error('Registration Error:', err.response?.data || err.message);
             return rejectWithValue(err.response?.data?.message || 'Error al registrar');
         }
     }
@@ -19,7 +19,7 @@ export const loginUser = createAsyncThunk(
     'auth/login',
     async (credentials, { rejectWithValue }) => {
         try {
-            const response = await axios.post('/api/v1/auth/login', credentials);
+            const response = await api.post('/auth/login', credentials);
             return response.data; // Expected { status, data: { user, token } }
         } catch (err) {
             return rejectWithValue(err.response?.data?.message || 'Error al iniciar sesión');
@@ -29,7 +29,15 @@ export const loginUser = createAsyncThunk(
 
 // Initial State with Persistence Check
 const token = localStorage.getItem('token');
-const user = JSON.parse(localStorage.getItem('user')); // Simplistic persistence
+const getUserFromStorage = () => {
+    try {
+        const item = localStorage.getItem('user');
+        return item && item !== 'undefined' ? JSON.parse(item) : null;
+    } catch {
+        return null;
+    }
+};
+const user = getUserFromStorage();
 
 const initialState = {
     user: user || null,
