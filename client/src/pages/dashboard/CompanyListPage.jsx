@@ -49,7 +49,7 @@ const CompanyListPage = () => {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-[#0F2C4C]">Mis Empresas</h1>
+                    <h1 className="font-bold text-[#0F2C4C]">Mis Empresas</h1>
                     <p className="text-gray-500 mt-1">Administra tus organizaciones y selecciona con cuál trabajar.</p>
                 </div>
                 <button

@@ -135,7 +135,7 @@ const CreateReceiptPage = () => {
                     <ArrowLeft size={20} />
                 </Link>
                 <div>
-                    <h1 className="text-3xl font-bold text-[#0F2C4C]">Nuevo Recibo</h1>
+                    <h1 className="font-bold text-[#0F2C4C]">Nuevo Recibo</h1>
                     <p className="text-gray-500">Generación de liquidación para {activeCompany.razonSocial}</p>
                 </div>
             </div>
@@ -147,7 +147,7 @@ const CreateReceiptPage = () => {
 
                     {/* 1. Selection Card */}
                     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                        <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
                             <Building size={18} className="text-brand-secondary" />
                             Datos del Recibo
                         </h3>
