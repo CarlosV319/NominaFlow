@@ -20,44 +20,45 @@ const Navbar = () => {
     const navLinks = [
         { name: 'Quienes Somos', path: '/about' },
         { name: 'Nuestro Servicio', path: '/services' },
+        { name: 'Planes', path: '/planes' },
         { name: 'Contacto', path: '/contact' },
     ];
 
     return (
-        <nav className="bg-brand-primary text-brand-bg shadow-md sticky top-0 z-50">
+        <nav className="bg-gradient-to-r from-brand-primary via-[#1a4c7c] to-brand-primary bg-[length:200%_200%] animate-smoke text-brand-bg shadow-md sticky top-0 z-50">
             <div className="layout-container h-16 flex items-center justify-between">
 
                 {/* Logo */}
-                <Link to="/" className="text-xl font-bold tracking-wide hover:text-brand-secondary transition-colors duration-300">
+                <Link to="/" className="text-lg md:text-lg lg:text-xl font-bold tracking-wide hover:text-brand-secondary transition-colors duration-300 whitespace-nowrap">
                     NominaFlow
                 </Link>
 
                 {/* Desktop Menu */}
-                <div className="hidden md:flex items-center space-x-8">
+                <div className="hidden md:flex items-center md:space-x-4 lg:space-x-8">
                     {navLinks.map((link) => (
                         <Link
                             key={link.name}
                             to={link.path}
-                            className="text-sm font-medium hover:text-brand-secondary transition-colors duration-300"
+                            className="md:text-xs lg:text-xs font-medium hover:text-brand-secondary transition-colors duration-300 whitespace-nowrap"
                         >
                             {link.name}
                         </Link>
                     ))}
 
                     {/* Auth Buttons Desktop */}
-                    <div className="ml-4">
+                    <div className="md:ml-2 lg:ml-4 flex items-center">
                         {isAuthenticated ? (
-                            <div className="flex items-center space-x-4">
-                                <span className="text-xs opacity-80">Hola, {user?.firstName}</span>
+                            <div className="flex items-center md:space-x-2 lg:space-x-4">
+                                <span className="text-xs opacity-80 whitespace-nowrap md:hidden lg:inline">Hola, {user?.firstName}</span>
                                 <Link
                                     to="/dashboard"
-                                    className="bg-brand-secondary text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-opacity-90 transition shadow-sm"
+                                    className="bg-brand-secondary text-white md:px-3 md:py-1.5 lg:px-4 lg:py-2 rounded-md md:text-xs lg:text-xs font-semibold hover:bg-opacity-90 transition shadow-sm whitespace-nowrap"
                                 >
-                                    Ir al Dashboard
+                                    Dashboard
                                 </Link>
                                 <button
                                     onClick={handleLogout}
-                                    className="text-sm border border-brand-bg/30 px-3 py-2 rounded-md hover:bg-white/10 transition"
+                                    className="md:text-xs lg:text-xs border border-brand-bg/30 md:px-2 md:py-1.5 lg:px-3 lg:py-2 rounded-md hover:bg-white/10 transition whitespace-nowrap"
                                 >
                                     Salir
                                 </button>
@@ -65,9 +66,9 @@ const Navbar = () => {
                         ) : (
                             <Link
                                 to="/login"
-                                className="bg-brand-secondary text-white px-5 py-2 rounded-md text-sm font-semibold hover:bg-opacity-90 transition shadow-sm transform hover:-translate-y-0.5"
+                                className="bg-brand-secondary text-white md:px-3 md:py-1.5 lg:px-5 lg:py-2 rounded-md md:text-xs lg:text-xs font-semibold hover:bg-opacity-90 transition shadow-sm transform hover:-translate-y-0.5 whitespace-nowrap"
                             >
-                                Inicio de Sesión
+                                Iniciar Sesión
                             </Link>
                         )}
                     </div>

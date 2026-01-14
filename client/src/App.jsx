@@ -2,6 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
 
+import PricingPage from './pages/PricingPage';
+
 // Placeholder Pages (Temporary)
 const Home = () => (
   <div className="layout-container py-20 text-center">
@@ -11,6 +13,7 @@ const Home = () => (
 );
 
 const Login = () => <div className="layout-container py-20 text-center">Login Page Placeholder</div>;
+const Register = () => <div className="layout-container py-20 text-center">Register Page Placeholder</div>;
 const Dashboard = () => <div className="layout-container py-20 text-center">Dashboard Placeholder (Protected)</div>;
 const Services = () => <div className="layout-container py-20 text-center">Nuestros Servicios</div>;
 const Contact = () => <div className="layout-container py-20 text-center">Contacto</div>;
@@ -24,7 +27,9 @@ function App() {
         <main>
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/planes" element={<PricingPage />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/services" element={<Services />} />
             <Route path="/contact" element={<Contact />} />

@@ -12,6 +12,16 @@ export default {
                     secondary: '#E85D04', // Naranja Acción
                     bg: '#F8FAFC', // Blanco Suave/Off-white
                 }
+            },
+            keyframes: {
+                smoke: {
+                    '0%': { backgroundPosition: '0% 50%' },
+                    '50%': { backgroundPosition: '100% 50%' },
+                    '100%': { backgroundPosition: '0% 50%' },
+                }
+            },
+            animation: {
+                smoke: 'smoke 15s ease infinite',
             }
         },
     },
