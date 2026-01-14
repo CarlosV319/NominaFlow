@@ -1,17 +1,41 @@
 import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navbar from './components/layout/Navbar';
+
+// Placeholder Pages (Temporary)
+const Home = () => (
+  <div className="layout-container py-20 text-center">
+    <h1 className="text-4xl font-bold text-brand-primary mb-4">Simplifica tu Nómina</h1>
+    <p className="text-xl text-gray-600">Gestión eficiente para empresas modernas.</p>
+  </div>
+);
+
+const Login = () => <div className="layout-container py-20 text-center">Login Page Placeholder</div>;
+const Dashboard = () => <div className="layout-container py-20 text-center">Dashboard Placeholder (Protected)</div>;
+const Services = () => <div className="layout-container py-20 text-center">Nuestros Servicios</div>;
+const Contact = () => <div className="layout-container py-20 text-center">Contacto</div>;
+const About = () => <div className="layout-container py-20 text-center">Quienes Somos</div>;
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg">
-        <h1 className="text-3xl font-bold text-blue-600 mb-4">
-          NominaFlow
-        </h1>
-        <p className="text-gray-700">
-          Frontend initialized with React, Vite, Tailwind CSS, and Redux.
-        </p>
+    <Router>
+      <div className="min-h-screen bg-brand-bg font-sans text-gray-800">
+        <Navbar />
+        <main>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/about" element={<About />} />
+
+            {/* Fallback */}
+            <Route path="*" element={<div className="text-center py-20">404 Not Found</div>} />
+          </Routes>
+        </main>
       </div>
-    </div>
+    </Router>
   );
 }
 
