@@ -100,9 +100,12 @@ app.use((err, req, res, next) => {
             });
         } else {
             console.error('ERROR 💥', err);
+            // TEMPORARY DEBUG: Expose error details in production
             res.status(500).json({
                 status: 'error',
-                message: 'Algo salió mal!'
+                message: err.message,
+                stack: err.stack, // Borrar esto después de arreglar
+                error: err
             });
         }
     }
