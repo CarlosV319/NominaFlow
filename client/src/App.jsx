@@ -10,8 +10,9 @@ import RegisterPage from './pages/RegisterPage';
 import CompanyListPage from './pages/dashboard/CompanyListPage';
 import EmployeeListPage from './pages/dashboard/EmployeeListPage';
 import CreateReceiptPage from './pages/dashboard/CreateReceiptPage';
+import ReceiptListPage from './pages/dashboard/ReceiptListPage';
 
-// Placeholder Pages (Temporary)
+
 const Home = () => (
   <div className="layout-container py-20 text-center">
     <h1 className="text-4xl font-bold text-brand-primary mb-4">Simplifica tu Nómina</h1>
@@ -63,6 +64,7 @@ function App() {
             <Route index element={<DashboardHome />} />
             <Route path="companies" element={<CompanyListPage />} />
             <Route path="employees" element={<EmployeeListPage />} />
+            <Route path="receipts" element={<ReceiptListPage />} />
             <Route path="receipts/new" element={<CreateReceiptPage />} />
           </Route>
 

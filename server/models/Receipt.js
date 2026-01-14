@@ -32,13 +32,7 @@ const receiptSchema = new mongoose.Schema({
     companySnapshot: {
         razonSocial: { type: String, required: true },
         cuit: { type: String, required: true },
-        domicilio: {
-            calle: String,
-            altura: String,
-            piso: String,
-            cp: String,
-            localidad: String
-        }
+        domicilio: { type: String, required: true }
     },
     items: [{
         codigo: { type: String, required: true },
