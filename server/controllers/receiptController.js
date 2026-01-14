@@ -52,7 +52,8 @@ export const createReceipt = async (req, res) => {
             cuil: employee.cuil,
             cargo: employee.cargo,
             cbu: employee.cbu,
-            fechaIngreso: employee.fechaIngreso
+            fechaIngreso: employee.fechaIngreso,
+            banco: employee.banco // Aseguramos que pase el banco
         },
         companySnapshot: {
             razonSocial: company.razonSocial,
@@ -110,7 +111,7 @@ export const getReceipts = async (req, res) => {
 export const downloadReceiptPDF = async (req, res) => {
     const { id } = req.params;
 
-    const receipt = await Receipt.findOne({ _id: id, user: req.user.id });
+    const receipt = await Receipt.findOne({ _id: id, user: req.user.id }).lean();
     if (!receipt) {
         throw new AppError('Recibo no encontrado', 404);
     }
