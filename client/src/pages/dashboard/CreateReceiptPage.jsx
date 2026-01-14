@@ -59,13 +59,7 @@ const CreateReceiptPage = () => {
         }
     }, [activeCompany, dispatch]);
 
-    useEffect(() => {
-        if (success) {
-            toast.success('Recibo generado correctamente');
-            dispatch(resetReceiptStatus());
-            navigate('/dashboard/receipts'); // Or detail page
-        }
-    }, [success, dispatch, navigate]);
+
 
     useEffect(() => {
         if (error) toast.error(typeof error === 'string' ? error : 'Error al generar recibo');
@@ -100,7 +94,7 @@ const CreateReceiptPage = () => {
         toast.success('Conceptos base cargados');
     };
 
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
         // Transform data for Backend
         const formattedItems = data.items.map(item => ({
             codigo: item.codigo,
@@ -120,7 +114,14 @@ const CreateReceiptPage = () => {
             items: formattedItems
         };
 
-        dispatch(createReceipt(payload));
+        try {
+            const res = await dispatch(createReceipt(payload)).unwrap();
+            toast.success('Recibo generado correctamente');
+            navigate(`/dashboard/receipts/${res._id}/preview`);
+        } catch (err) {
+            // Error is handled by slice/toast in useEffect or here
+            console.error(err);
+        }
     };
 
     if (!activeCompany) {

@@ -36,13 +36,16 @@ export const createReceipt = async (req, res) => {
     const totalNeto = totalBruto - totalDeducciones;
 
     // Acción 2 y 4: Construcción del Snapshot y Guardado
-    const receipt = await Receipt.create({
+    console.log('--- CREATING RECEIPT DEBUG ---');
+    console.log('Employee:', employee.nombre);
+    console.log('Company:', company.razonSocial);
+    console.log('Company Domicilio Type:', typeof company.domicilio, company.domicilio);
+
+    const receiptData = {
         user: req.user.id,
         company: company._id,
         employee: employee._id,
-        periodo, // { mes, anio }
-
-        // Snapshot Inmutable del Empleado
+        periodo,
         employeeSnapshot: {
             nombre: employee.nombre,
             apellido: employee.apellido,
@@ -51,27 +54,30 @@ export const createReceipt = async (req, res) => {
             cbu: employee.cbu,
             fechaIngreso: employee.fechaIngreso
         },
-
-        // Snapshot Inmutable de la Empresa
         companySnapshot: {
             razonSocial: company.razonSocial,
             cuit: company.cuit,
             domicilio: company.domicilio
         },
-
-        items: processedItems, // Array de conceptos ya procesados (si hubo alguna lógica extra)
-
+        items: processedItems,
         totales: {
             totalBruto,
             totalNeto,
             totalDescuentos: totalDeducciones
         }
-    });
+    };
+    console.log('Receipt Data to Save:', JSON.stringify(receiptData, null, 2));
 
-    res.status(201).json({
-        status: 'success',
-        data: receipt
-    });
+    try {
+        const receipt = await Receipt.create(receiptData);
+        res.status(201).json({
+            status: 'success',
+            data: receipt
+        });
+    } catch (error) {
+        console.error('MONGOOSE ERROR:', error);
+        throw error; // Re-throw to be caught by global handler
+    }
 };
 
 // @desc    Obtener recibos
@@ -95,4 +101,32 @@ export const getReceipts = async (req, res) => {
         results: receipts.length,
         data: receipts
     });
+};
+
+// @desc    Descargar PDF de recibo
+// @route   GET /api/receipts/:id/pdf
+// @access  Private
+export const downloadReceiptPDF = async (req, res) => {
+    const { id } = req.params;
+
+    const receipt = await Receipt.findOne({ _id: id, user: req.user.id });
+    if (!receipt) {
+        throw new AppError('Recibo no encontrado', 404);
+    }
+
+    try {
+        const { generateReceiptPDF } = await import('../services/pdfService.js');
+        const pdfBuffer = await generateReceiptPDF(receipt);
+
+        res.set({
+            'Content-Type': 'application/pdf',
+            'Content-Disposition': `attachment; filename="recibo-${receipt.employeeSnapshot.apellido}-${receipt.periodo.mes}-${receipt.periodo.anio}.pdf"`,
+            'Content-Length': pdfBuffer.length
+        });
+
+        res.send(pdfBuffer);
+    } catch (error) {
+        console.error('PDF Gen Error:', error);
+        throw new AppError('Error generando el PDF', 500);
+    }
 };

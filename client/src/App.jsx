@@ -11,6 +11,7 @@ import CompanyListPage from './pages/dashboard/CompanyListPage';
 import EmployeeListPage from './pages/dashboard/EmployeeListPage';
 import CreateReceiptPage from './pages/dashboard/CreateReceiptPage';
 import ReceiptListPage from './pages/dashboard/ReceiptListPage';
+import ReceiptPreviewPage from './pages/dashboard/ReceiptPreviewPage';
 
 
 const Home = () => (
@@ -66,6 +67,7 @@ function App() {
             <Route path="employees" element={<EmployeeListPage />} />
             <Route path="receipts" element={<ReceiptListPage />} />
             <Route path="receipts/new" element={<CreateReceiptPage />} />
+            <Route path="receipts/:id/preview" element={<ReceiptPreviewPage />} />
           </Route>
 
           {/* Fallback */}

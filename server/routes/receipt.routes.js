@@ -1,5 +1,5 @@
 import express from 'express';
-import { createReceipt, getReceipts } from '../controllers/receiptController.js';
+import { createReceipt, getReceipts, downloadReceiptPDF } from '../controllers/receiptController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -11,9 +11,6 @@ router
     .get(getReceipts)
     .post(createReceipt); // Snapshot generation logic
 
-router.get('/:id/pdf', (req, res) => {
-    // Placeholder para generación de PDF
-    res.status(501).json({ message: 'Generación de PDF pendiente de implementación' });
-});
+router.get('/:id/pdf', downloadReceiptPDF);
 
 export default router;
