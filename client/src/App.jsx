@@ -1,7 +1,8 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Navbar from './components/layout/Navbar';
+import DashboardLayout from './components/layout/DashboardLayout';
 
 import PricingPage from './pages/PricingPage';
 import LoginPage from './pages/LoginPage';
@@ -15,32 +16,55 @@ const Home = () => (
   </div>
 );
 
-const Dashboard = () => <div className="layout-container py-20 text-center">Dashboard Placeholder (Protected)</div>;
+const DashboardHome = () => (
+  <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+    <h2 className="text-2xl font-bold text-gray-800 mb-4">Resumen de Actividad</h2>
+    <p className="text-gray-500">Bienvenido al panel de control.</p>
+  </div>
+);
+
 const Services = () => <div className="layout-container py-20 text-center">Nuestros Servicios</div>;
 const Contact = () => <div className="layout-container py-20 text-center">Contacto</div>;
 const About = () => <div className="layout-container py-20 text-center">Quienes Somos</div>;
+
+// Public Layout Wrapper
+const PublicLayout = () => (
+  <>
+    <Navbar />
+    <main>
+      <Outlet />
+    </main>
+  </>
+);
 
 function App() {
   return (
     <Router>
       <div className="min-h-screen bg-brand-bg font-sans text-gray-800">
         <Toaster position="top-right" />
-        <Navbar />
-        <main>
-          <Routes>
+
+        <Routes>
+          {/* Public Routes */}
+          <Route element={<PublicLayout />}>
             <Route path="/" element={<Home />} />
             <Route path="/planes" element={<PricingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
-            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/services" element={<Services />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/about" element={<About />} />
+          </Route>
 
-            {/* Fallback */}
-            <Route path="*" element={<div className="text-center py-20">404 Not Found</div>} />
-          </Routes>
-        </main>
+          {/* Private Routes (Dashboard) */}
+          <Route path="/dashboard" element={<DashboardLayout />}>
+            <Route index element={<DashboardHome />} />
+            <Route path="companies" element={<CompanyListPage />} />
+            {/* Future routes: /dashboard/employees */}
+          </Route>
+
+          {/* Fallback */}
+          <Route path="*" element={<div className="text-center py-20">404 Not Found</div>} />
+        </Routes>
       </div>
     </Router>
   );
