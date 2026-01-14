@@ -7,6 +7,7 @@ import DashboardLayout from './components/layout/DashboardLayout';
 import PricingPage from './pages/PricingPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import CompanyListPage from './pages/dashboard/CompanyListPage';
 
 // Placeholder Pages (Temporary)
 const Home = () => (
