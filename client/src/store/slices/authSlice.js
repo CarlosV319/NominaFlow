@@ -27,6 +27,30 @@ export const loginUser = createAsyncThunk(
     }
 );
 
+export const updateProfile = createAsyncThunk(
+    'auth/updateProfile',
+    async (userData, { rejectWithValue }) => {
+        try {
+            const response = await api.put('/auth/updatedetails', userData);
+            return response.data.data; // Returns updated user object
+        } catch (err) {
+            return rejectWithValue(err.response?.data?.message || 'Error al actualizar perfil');
+        }
+    }
+);
+
+export const updatePassword = createAsyncThunk(
+    'auth/updatePassword',
+    async (passwordData, { rejectWithValue }) => {
+        try {
+            const response = await api.put('/auth/updatepassword', passwordData);
+            return response.data; // { token, data: user }
+        } catch (err) {
+            return rejectWithValue(err.response?.data?.message || 'Error al actualizar contraseña');
+        }
+    }
+);
+
 // Initial State with Persistence Check
 const token = localStorage.getItem('token');
 const getUserFromStorage = () => {
@@ -96,6 +120,37 @@ const authSlice = createSlice({
                 localStorage.setItem('user', JSON.stringify(state.user));
             })
             .addCase(loginUser.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            // Update Profile
+            .addCase(updateProfile.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(updateProfile.fulfilled, (state, action) => {
+                state.loading = false;
+                state.user = action.payload;
+                localStorage.setItem('user', JSON.stringify(state.user));
+            })
+            .addCase(updateProfile.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            // Update Password
+            .addCase(updatePassword.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(updatePassword.fulfilled, (state, action) => {
+                state.loading = false;
+                // If token is rotated
+                if (action.payload.token) {
+                    state.token = action.payload.token;
+                    localStorage.setItem('token', state.token);
+                }
+            })
+            .addCase(updatePassword.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             });

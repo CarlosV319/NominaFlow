@@ -14,6 +14,7 @@ import CreateReceiptPage from './pages/dashboard/CreateReceiptPage';
 import ReceiptListPage from './pages/dashboard/ReceiptListPage';
 import ReceiptPreviewPage from './pages/dashboard/ReceiptPreviewPage';
 import DashboardHome from './pages/dashboard/DashboardHome';
+import SettingsPage from './pages/dashboard/SettingsPage';
 
 
 const Home = () => (
@@ -66,6 +67,7 @@ function App() {
             <Route path="receipts" element={<ReceiptListPage />} />
             <Route path="receipts/new" element={<CreateReceiptPage />} />
             <Route path="receipts/:id/preview" element={<ReceiptPreviewPage />} />
+            <Route path="settings" element={<SettingsPage />} />
           </Route>
 
           {/* Fallback */}
