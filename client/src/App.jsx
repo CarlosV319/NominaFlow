@@ -17,12 +17,12 @@ import DashboardHome from './pages/dashboard/DashboardHome';
 import SettingsPage from './pages/dashboard/SettingsPage';
 
 
-const Home = () => (
-  <div className="layout-container py-20 text-center">
-    <h1 className="text-4xl font-bold text-brand-primary mb-4">Simplifica tu Nómina</h1>
-    <p className="text-xl text-gray-600">Gestión eficiente para empresas modernas.</p>
-  </div>
-);
+import HomePage from './pages/HomePage';
+
+// ... (other imports)
+
+// Route definition update
+const Home = HomePage; // Or directly use HomePage in the route
 
 
 
