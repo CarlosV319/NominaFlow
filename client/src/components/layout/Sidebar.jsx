@@ -34,6 +34,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                     <NavLink
                         key={item.path}
                         to={item.path}
+                        end={item.path === '/dashboard'} // Only match exact path for Dashboard home
                         onClick={onClose} // Auto-close on mobile when clicking link
                         className={({ isActive }) =>
                             `flex items-center px-4 py-3 rounded-xl transition-all duration-200 group ${isActive

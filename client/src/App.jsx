@@ -13,6 +13,7 @@ import EmployeeDetailPage from './pages/dashboard/EmployeeDetailPage';
 import CreateReceiptPage from './pages/dashboard/CreateReceiptPage';
 import ReceiptListPage from './pages/dashboard/ReceiptListPage';
 import ReceiptPreviewPage from './pages/dashboard/ReceiptPreviewPage';
+import DashboardHome from './pages/dashboard/DashboardHome';
 
 
 const Home = () => (
@@ -22,12 +23,7 @@ const Home = () => (
   </div>
 );
 
-const DashboardHome = () => (
-  <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-    <h2 className="text-2xl font-bold text-gray-800 mb-4">Resumen de Actividad</h2>
-    <p className="text-gray-500">Bienvenido al panel de control.</p>
-  </div>
-);
+
 
 const Services = () => <div className="layout-container py-20 text-center">Nuestros Servicios</div>;
 const Contact = () => <div className="layout-container py-20 text-center">Contacto</div>;
