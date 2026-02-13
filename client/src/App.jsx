@@ -18,6 +18,8 @@ import SettingsPage from './pages/dashboard/SettingsPage';
 
 
 import HomePage from './pages/HomePage';
+import ServicesPage from './pages/ServicesPage';
+import AboutPage from './pages/AboutPage';
 
 // ... (other imports)
 
@@ -30,15 +32,7 @@ const Services = () => <div className="layout-container py-20 text-center">Nuest
 const Contact = () => <div className="layout-container py-20 text-center">Contacto</div>;
 const About = () => <div className="layout-container py-20 text-center">Quienes Somos</div>;
 
-// Public Layout Wrapper
-const PublicLayout = () => (
-  <>
-    <Navbar />
-    <main>
-      <Outlet />
-    </main>
-  </>
-);
+import PublicLayout from './components/layout/PublicLayout';
 
 function App() {
   return (
@@ -53,9 +47,9 @@ function App() {
             <Route path="/planes" element={<PricingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
-            <Route path="/services" element={<Services />} />
+            <Route path="/services" element={<ServicesPage />} />
             <Route path="/contact" element={<Contact />} />
-            <Route path="/about" element={<About />} />
+            <Route path="/about" element={<AboutPage />} />
           </Route>
 
           {/* Private Routes (Dashboard) */}

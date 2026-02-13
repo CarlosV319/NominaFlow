@@ -90,6 +90,129 @@ const HomePage = () => {
                     </div>
                 </div>
             </section>
+
+            {/* Features Grid */}
+            <section className="py-20 bg-white">
+                <div className="layout-container">
+                    <div className="text-center max-w-3xl mx-auto mb-16">
+                        <span className="text-brand-secondary font-bold uppercase tracking-wider text-sm mb-2 block">Por qué elegirnos</span>
+                        <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-4">Todo lo que necesitas para tu nómina</h2>
+                        <p className="text-slate-600 text-lg">
+                            Una plataforma diseñada para simplificar la vida de empresarios y contadores.
+                        </p>
+                    </div>
+
+                    <div className="grid md:grid-cols-3 gap-8">
+                        {/* Feature 1 */}
+                        <div className="p-8 bg-slate-50 rounded-2xl border border-slate-100 hover:shadow-xl transition-all duration-300 group">
+                            <div className="w-14 h-14 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                                <Calculator size={28} />
+                            </div>
+                            <h3 className="text-xl font-bold text-slate-800 mb-3">Cálculos Precisos</h3>
+                            <p className="text-slate-600">Olvídate de los errores manuales. Nuestro motor de cálculo se actualiza con las últimas normativas.</p>
+                        </div>
+
+                        {/* Feature 2 */}
+                        <div className="p-8 bg-slate-50 rounded-2xl border border-slate-100 hover:shadow-xl transition-all duration-300 group">
+                            <div className="w-14 h-14 bg-orange-100 text-orange-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                                <Users size={28} />
+                            </div>
+                            <h3 className="text-xl font-bold text-slate-800 mb-3">Gestión de Personal</h3>
+                            <p className="text-slate-600">Centraliza legajos, vacaciones y licencias en un solo lugar accesible 24/7.</p>
+                        </div>
+
+                        {/* Feature 3 */}
+                        <div className="p-8 bg-slate-50 rounded-2xl border border-slate-100 hover:shadow-xl transition-all duration-300 group">
+                            <div className="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                                <FileText size={28} />
+                            </div>
+                            <h3 className="text-xl font-bold text-slate-800 mb-3">Recibos Digitales</h3>
+                            <p className="text-slate-600">Envía recibos firmados digitalmente a tus empleados con un solo clic. Ahorra papel y tiempo.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Testimonials */}
+            <section className="py-20 bg-brand-bg border-y border-slate-200">
+                <div className="layout-container">
+                    <h2 className="text-3xl md:text-4xl font-bold text-center text-slate-800 mb-16">Lo que dicen nuestros clientes</h2>
+
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {/* Testimonial 1 */}
+                        <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+                            <div className="flex gap-1 mb-4 text-orange-400">
+                                {[...Array(5)].map((_, i) => <span key={i}>★</span>)}
+                            </div>
+                            <p className="text-slate-600 mb-6 italic">"NominaFlow cambió completamente la forma en que gestionamos los sueldos. Antes tardábamos días, ahora son horas."</p>
+                            <div className="flex items-center gap-4">
+                                <div className="w-10 h-10 bg-slate-200 rounded-full flex items-center justify-center font-bold text-slate-500">JP</div>
+                                <div>
+                                    <p className="font-bold text-slate-800">Juan Pérez</p>
+                                    <p className="text-xs text-slate-500">CEO, TechStart</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Testimonial 2 */}
+                        <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+                            <div className="flex gap-1 mb-4 text-orange-400">
+                                {[...Array(5)].map((_, i) => <span key={i}>★</span>)}
+                            </div>
+                            <p className="text-slate-600 mb-6 italic">"La interfaz es súper intuitiva y el soporte es excelente. Recomendado para cualquier PyME."</p>
+                            <div className="flex items-center gap-4">
+                                <div className="w-10 h-10 bg-slate-200 rounded-full flex items-center justify-center font-bold text-slate-500">MG</div>
+                                <div>
+                                    <p className="font-bold text-slate-800">María García</p>
+                                    <p className="text-xs text-slate-500">RRHH, Consultora Sur</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Testimonial 3 */}
+                        <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+                            <div className="flex gap-1 mb-4 text-orange-400">
+                                {[...Array(5)].map((_, i) => <span key={i}>★</span>)}
+                            </div>
+                            <p className="text-slate-600 mb-6 italic">"Poder acceder a los recibos desde el celular es una gran ventaja para nuestros empleados."</p>
+                            <div className="flex items-center gap-4">
+                                <div className="w-10 h-10 bg-slate-200 rounded-full flex items-center justify-center font-bold text-slate-500">CR</div>
+                                <div>
+                                    <p className="font-bold text-slate-800">Carlos Ruiz</p>
+                                    <p className="text-xs text-slate-500">Gerente, Logística Express</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Final CTA */}
+            <section className="py-24 bg-[#0F2C4C] relative overflow-hidden">
+                {/* Background decoration */}
+                <div className="absolute top-0 right-0 w-1/2 h-full bg-brand-secondary/5 skew-x-12 transform origin-top-right"></div>
+
+                <div className="layout-container relative z-10 text-center">
+                    <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-6">Empieza a optimizar tu nómina hoy</h2>
+                    <p className="text-xl text-blue-200 max-w-2xl mx-auto mb-10">
+                        Únete a las empresas que ya están ahorrando tiempo y dinero con NominaFlow.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                        <Link
+                            to="/register"
+                            className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-slate-900 transition-all duration-200 bg-brand-secondary rounded-xl hover:bg-orange-400 shadow-lg shadow-orange-900/20"
+                        >
+                            Crear Cuenta Gratis
+                        </Link>
+                        <Link
+                            to="/contact"
+                            className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white transition-all duration-200 bg-transparent border-2 border-white/20 rounded-xl hover:bg-white/10"
+                        >
+                            Agendar Demo
+                        </Link>
+                    </div>
+                </div>
+            </section>
         </div>
     );
 };
