@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { LayoutDashboard, Building, Users, FileText, Settings, X, Building2 } from 'lucide-react';
+import QuotaIndicator from '../dashboard/QuotaIndicator';
 
 const Sidebar = ({ isOpen, onClose }) => {
     const navItems = [
@@ -48,11 +49,9 @@ const Sidebar = ({ isOpen, onClose }) => {
             </nav>
 
             {/* User Info / Footer (Optional) */}
-            <div className="p-4 border-t border-[#1e4570]">
-                <div className="bg-[#1e4570] rounded-xl p-4">
-                    <p className="text-xs text-gray-400 mb-1">Plan Actual</p>
-                    <p className="text-sm font-bold text-white">Estudio Contable</p>
-                </div>
+            {/* User Info / Footer - Subscription Quota */}
+            <div className="p-4 border-t border-[#1e4570] bg-[#0F2C4C]">
+                <QuotaIndicator />
             </div>
         </div>
     );

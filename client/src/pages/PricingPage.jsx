@@ -1,55 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { plans } from '../config/plans';
 
 const PricingPage = () => {
-    const plans = [
-        {
-            id: 'monotributista',
-            name: 'Monotributista',
-            description: 'Para contadores independientes.',
-            price: '$5 USD',
-            period: '/mes',
-            features: ['Hasta 5 Empresas', 'Liquidación Básica', 'Soporte por Email'],
-            buttonText: 'Elegir Plan',
-            buttonStyle: 'outline',
-            highlight: false,
-        },
-        {
-            id: 'estudio',
-            name: 'Estudio Contable',
-            description: 'Potencia tu estudio con herramientas pro.',
-            price: '$15 USD',
-            period: '/mes',
-            features: [
-                'Empresas Ilimitadas',
-                'Generación de PDFs en lote',
-                'Multi-usuario',
-                'Soporte Prioritario',
-                'Migración Asistida'
-            ],
-            buttonText: 'Empezar Prueba Gratis',
-            buttonStyle: 'secondary',
-            highlight: true,
-            tag: 'Más Popular',
-        },
-        {
-            id: 'enterprise',
-            name: 'Enterprise',
-            description: 'Soluciones a medida para grandes volúmenes.',
-            price: 'Consultar',
-            period: '',
-            features: [
-                'API Access',
-                'Soporte 24/7',
-                'SLA Garantizado',
-                'Auditoría Avanzada',
-                'Capacitación Dedicada'
-            ],
-            buttonText: 'Contactar Ventas',
-            buttonStyle: 'primary',
-            highlight: false,
-        },
-    ];
 
     return (
         <div className="bg-brand-bg min-h-screen py-10 md:py-16 px-4">
@@ -63,29 +16,30 @@ const PricingPage = () => {
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-start">
                     {plans.map((plan) => (
                         <div
                             key={plan.id}
-                            className={`relative bg-white rounded-xl shadow-md p-6 transform transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${plan.highlight ? 'border border-brand-secondary md:scale-105 z-10' : 'border border-gray-100'
+                            className={`relative bg-white rounded-xl shadow-md p-6 h-full flex flex-col transform transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${plan.highlight ? 'border-2 border-brand-secondary ring-4 ring-brand-secondary/10 z-10 scale-105' : 'border border-gray-100'
                                 }`}
                         >
                             {plan.highlight && (
-                                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-brand-secondary text-white text-[10px] uppercase font-bold tracking-wider px-3 py-0.5 rounded-full shadow-sm">
-                                    {plan.tag}
+                                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-brand-secondary text-white text-[10px] uppercase font-bold tracking-wider px-3 py-0.5 rounded-full shadow-sm whitespace-nowrap">
+                                    {plan.badge}
                                 </div>
                             )}
 
                             <div className="text-center mb-5">
-                                <h3 className="text-sm font-bold text-brand-primary mb-1">{plan.name}</h3>
-                                <p className="text-xs text-gray-400 mb-3">{plan.description}</p>
+                                <h3 className="text-lg font-bold text-brand-primary mb-1">{plan.name}</h3>
+                                <p className="text-[10px] text-brand-secondary uppercase font-bold tracking-wide mb-2">{plan.tagline}</p>
+                                <p className="text-xs text-gray-400 mb-3 min-h-[40px]">{plan.description}</p>
                                 <div className="flex justify-center items-baseline text-brand-primary">
-                                    <span className="text-2xl font-bold">{plan.price}</span>
+                                    <span className="text-3xl font-bold">{plan.price}</span>
                                     <span className="text-xs text-gray-400 ml-1">{plan.period}</span>
                                 </div>
                             </div>
 
-                            <ul className="space-y-3 mb-6">
+                            <ul className="space-y-2 mb-6 flex-grow">
                                 {plan.features.map((feature, idx) => (
                                     <li key={idx} className="flex items-start">
                                         <svg
@@ -101,12 +55,12 @@ const PricingPage = () => {
                                 ))}
                             </ul>
 
-                            <div className="text-center">
+                            <div className="text-center mt-auto">
                                 <Link
                                     to={`/register?plan=${plan.id}`}
-                                    className={`block w-full py-2.5 px-4 rounded-md text-xs font-bold transition-colors duration-300 ${plan.buttonStyle === 'secondary'
-                                        ? 'bg-brand-secondary text-white hover:bg-opacity-90'
-                                        : plan.buttonStyle === 'primary'
+                                    className={`block w-full py-2.5 px-4 rounded-md text-xs font-bold transition-all duration-300 ${plan.buttonStyle === 'secondary'
+                                        ? 'bg-brand-secondary text-white hover:bg-opacity-90 shadow-md hover:shadow-lg'
+                                        : plan.buttonStyle === 'primary' || plan.buttonStyle === 'outline' /* defaulting outline to primary-like for now or handle separates */
                                             ? 'bg-brand-primary text-white hover:bg-opacity-90'
                                             : 'border border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white'
                                         }`}
