@@ -42,7 +42,7 @@ const DashboardHome = () => {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-800">
-                        {getGreeting()}, {user?.name.split(' ')[0]} 👋
+                        {getGreeting()}, {user?.firstName} 👋
                     </h1>
                     <p className="text-slate-500 mt-1">
                         Aquí tienes el resumen de tu actividad hoy.

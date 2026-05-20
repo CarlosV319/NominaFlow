@@ -3,6 +3,7 @@ import { useAppSelector, useAppDispatch } from '../../hooks/useRedux';
 import { logout } from '../../store/slices/authSlice';
 import { Menu, ChevronDown, User, LogOut, AlignLeft } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { clearCompanyContext } from '../../store/slices/companySlice';
 
 const TopBar = ({ onMenuClick }) => {
     const dispatch = useAppDispatch();
@@ -13,6 +14,7 @@ const TopBar = ({ onMenuClick }) => {
     const navigate = useNavigate();
 
     const handleLogout = () => {
+        dispatch(clearCompanyContext());
         dispatch(logout());
         navigate('/login');
     };

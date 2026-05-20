@@ -73,6 +73,15 @@ const companySlice = createSlice({
             .addCase(fetchCompanies.fulfilled, (state, action) => {
                 state.loading = false;
                 state.companies = action.payload;
+                
+                // Validar que la empresa activa siga existiendo en la lista del usuario
+                if (state.activeCompany && Array.isArray(action.payload)) {
+                    const isValid = action.payload.find(c => c._id === state.activeCompany._id);
+                    if (!isValid) {
+                        state.activeCompany = null;
+                        localStorage.removeItem('activeCompany');
+                    }
+                }
             })
             .addCase(fetchCompanies.rejected, (state, action) => {
                 state.loading = false;

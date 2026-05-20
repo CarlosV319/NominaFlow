@@ -29,9 +29,10 @@ const EmployeeFormModal = ({ isOpen, onClose, onCreate, loading, activeCompanyId
         register,
         handleSubmit,
         reset,
-        formState: { errors },
+        formState: { errors, dirtyFields },
     } = useForm({
         resolver: zodResolver(employeeSchema),
+        mode: 'onChange',
         defaultValues: {
             modalidadContratacion: 'Tiempo Indeterminado',
             banco: '',
@@ -75,10 +76,10 @@ const EmployeeFormModal = ({ isOpen, onClose, onCreate, loading, activeCompanyId
                                     <span className="w-2 h-2 rounded-full bg-blue-500"></span> Datos Personales
                                 </h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                    <InputGroup label="Nombre" name="nombre" register={register} error={errors.nombre} />
-                                    <InputGroup label="Apellido" name="apellido" register={register} error={errors.apellido} />
-                                    <InputGroup label="CUIL" name="cuil" type="number" register={register} error={errors.cuil} />
-                                    <InputGroup label="Nacimiento" name="fechaNacimiento" type="date" register={register} error={errors.fechaNacimiento} />
+                                    <InputGroup label="Nombre" name="nombre" register={register} error={errors.nombre} success={dirtyFields.nombre && !errors.nombre} />
+                                    <InputGroup label="Apellido" name="apellido" register={register} error={errors.apellido} success={dirtyFields.apellido && !errors.apellido} />
+                                    <InputGroup label="CUIL" name="cuil" type="number" register={register} error={errors.cuil} success={dirtyFields.cuil && !errors.cuil} />
+                                    <InputGroup label="Nacimiento" name="fechaNacimiento" type="date" register={register} error={errors.fechaNacimiento} success={dirtyFields.fechaNacimiento && !errors.fechaNacimiento} />
                                 </div>
                             </div>
 
@@ -88,8 +89,8 @@ const EmployeeFormModal = ({ isOpen, onClose, onCreate, loading, activeCompanyId
                                     <span className="w-2 h-2 rounded-full bg-green-500"></span> Datos Bancarios
                                 </h3>
                                 <div className="grid grid-cols-1 gap-3">
-                                    <InputGroup label="Banco" name="banco" placeholder="Ej: Galicia" register={register} error={errors.banco} />
-                                    <InputGroup label="CBU / CVU" name="cbu" type="number" register={register} error={errors.cbu} />
+                                    <InputGroup label="Banco" name="banco" placeholder="Ej: Galicia" register={register} error={errors.banco} success={dirtyFields.banco && !errors.banco} />
+                                    <InputGroup label="CBU / CVU" name="cbu" type="number" register={register} error={errors.cbu} success={dirtyFields.cbu && !errors.cbu} />
                                 </div>
                             </div>
                         </div>
@@ -101,24 +102,31 @@ const EmployeeFormModal = ({ isOpen, onClose, onCreate, loading, activeCompanyId
                             </h3>
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
                                 <div className="lg:col-span-1">
-                                    <InputGroup label="Legajo" name="legajo" register={register} error={errors.legajo} />
+                                    <InputGroup label="Legajo" name="legajo" register={register} error={errors.legajo} success={dirtyFields.legajo && !errors.legajo} />
                                 </div>
                                 <div className="lg:col-span-1">
-                                    <InputGroup label="Ingreso" name="fechaIngreso" type="date" register={register} error={errors.fechaIngreso} />
+                                    <InputGroup label="Ingreso" name="fechaIngreso" type="date" register={register} error={errors.fechaIngreso} success={dirtyFields.fechaIngreso && !errors.fechaIngreso} />
                                 </div>
                                 <div className="lg:col-span-1">
-                                    <InputGroup label="Cargo" name="cargo" placeholder="Puesto" register={register} error={errors.cargo} />
+                                    <InputGroup label="Cargo" name="cargo" placeholder="Puesto" register={register} error={errors.cargo} success={dirtyFields.cargo && !errors.cargo} />
                                 </div>
                                 <div className="lg:col-span-1">
                                     <label className="block text-xs font-semibold text-gray-700 mb-1">Modalidad</label>
-                                    <select {...register('modalidadContratacion')} className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-brand-secondary">
+                                    <select 
+                                        {...register('modalidadContratacion')} 
+                                        className={`w-full px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 transition-colors duration-200
+                                            ${errors.modalidadContratacion ? 'border-red-500 focus:ring-red-200' : 
+                                              (dirtyFields.modalidadContratacion && !errors.modalidadContratacion) ? 'border-green-500 focus:ring-green-200' : 
+                                              'border-gray-300 focus:border-brand-secondary focus:ring-brand-secondary/20'}
+                                        `}
+                                    >
                                         <option value="Tiempo Indeterminado">Indeterminado</option>
                                         <option value="Plazo Fijo">Plazo Fijo</option>
                                         <option value="Eventual">Eventual</option>
                                     </select>
                                 </div>
                                 <div className="lg:col-span-1">
-                                    <InputGroup label="Bruto" name="sueldoBruto" type="number" step="0.01" register={register} error={errors.sueldoBruto} />
+                                    <InputGroup label="Bruto" name="sueldoBruto" type="number" step="0.01" register={register} error={errors.sueldoBruto} success={dirtyFields.sueldoBruto && !errors.sueldoBruto} />
                                 </div>
                             </div>
                         </div>

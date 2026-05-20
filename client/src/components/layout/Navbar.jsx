@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../hooks/useRedux';
 import { logout } from '../../store/slices/authSlice';
+import { clearCompanyContext } from '../../store/slices/companySlice';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -10,6 +11,7 @@ const Navbar = () => {
     const navigate = useNavigate();
 
     const handleLogout = () => {
+        dispatch(clearCompanyContext());
         dispatch(logout());
         navigate('/login');
         setIsOpen(false);
