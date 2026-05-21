@@ -79,24 +79,24 @@ const CompanyConceptsPage = () => {
 
     return (
         <div className="max-w-5xl mx-auto pb-20 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="flex items-center gap-4 mb-8">
-                <Link to="/dashboard/companies" className="p-2 bg-white rounded-lg border text-gray-500 hover:text-gray-800 transition">
-                    <ArrowLeft size={20} />
+            <div className="flex items-center gap-4 mb-6">
+                <Link to="/dashboard/companies" className="p-1.5 bg-white rounded-lg border text-gray-500 hover:text-gray-800 transition">
+                    <ArrowLeft size={14} />
                 </Link>
                 <div>
-                    <h1 className="font-bold text-[#0F2C4C] text-2xl">Conceptos Personalizados</h1>
-                    <p className="text-gray-500">Administra los conceptos frecuentes para {activeCompany.razonSocial}</p>
+                    <h1 className="font-bold text-[#0F2C4C] text-[12px]">Conceptos Personalizados</h1>
+                    <p className="text-[10px] text-gray-500">Administra los conceptos frecuentes para {activeCompany.razonSocial}</p>
                 </div>
             </div>
 
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                <div className="p-6 border-b border-slate-200 flex justify-between items-center bg-gray-50">
-                    <h2 className="font-bold text-slate-800">Lista de Conceptos</h2>
+                <div className="p-4 border-b border-slate-200 flex justify-between items-center bg-gray-50">
+                    <h2 className="font-bold text-[12px] text-slate-800">Lista de Conceptos</h2>
                     <button
                         onClick={handleAddConcept}
-                        className="flex items-center gap-2 bg-indigo-50 text-indigo-700 px-4 py-2 rounded-lg hover:bg-indigo-100 transition font-medium text-sm border border-indigo-200"
+                        className="flex items-center gap-1.5 bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition font-medium text-[10px] border border-indigo-200"
                     >
-                        <Plus size={16} /> Añadir Concepto
+                        <Plus size={12} /> Añadir Concepto
                     </button>
                 </div>
 
@@ -110,63 +110,63 @@ const CompanyConceptsPage = () => {
                         <div className="overflow-x-auto">
                             <table className="w-full text-left border-collapse">
                                 <thead>
-                                    <tr className="bg-slate-50 border-b border-slate-200 text-[11px] uppercase tracking-wider text-slate-500">
+                                    <tr className="bg-slate-50 border-b border-slate-200 text-[10px] uppercase tracking-wider text-slate-500">
                                         <th className="p-2 font-bold w-24">Código</th>
                                         <th className="p-2 font-bold">Nombre del Concepto</th>
                                         <th className="p-2 font-bold w-40">Tipo de Cálculo</th>
                                         <th className="p-2 font-bold w-40">Naturaleza</th>
-                                        <th className="p-2 font-bold w-12 text-center"></th>
+                                        <th className="p-2 font-bold w-10 text-center"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {conceptos.map((concepto, index) => (
                                         <tr key={concepto._id || index} className="border-b border-slate-100 hover:bg-slate-50">
-                                            <td className="p-1.5">
+                                            <td className="p-1">
                                                 <input
                                                     type="text"
                                                     value={concepto.codigo}
                                                     onChange={(e) => handleChange(index, 'codigo', e.target.value)}
-                                                    className="w-full px-2 py-1.5 border border-slate-300 rounded text-xs focus:ring-2 focus:ring-brand-primary focus:border-brand-primary outline-none transition"
+                                                    className="w-full px-2 py-1.5 border border-slate-300 rounded text-[10px] focus:ring-2 focus:ring-brand-primary focus:border-brand-primary outline-none transition"
                                                     placeholder="Ej: 1001"
                                                 />
                                             </td>
-                                            <td className="p-1.5">
+                                            <td className="p-1">
                                                 <input
                                                     type="text"
                                                     value={concepto.concepto}
                                                     onChange={(e) => handleChange(index, 'concepto', e.target.value)}
-                                                    className="w-full px-2 py-1.5 border border-slate-300 rounded text-xs focus:ring-2 focus:ring-brand-primary focus:border-brand-primary outline-none transition"
+                                                    className="w-full px-2 py-1.5 border border-slate-300 rounded text-[10px] focus:ring-2 focus:ring-brand-primary focus:border-brand-primary outline-none transition"
                                                     placeholder="Ej: Bono Productividad"
                                                 />
                                             </td>
-                                            <td className="p-1.5">
+                                            <td className="p-1">
                                                 <select
                                                     value={concepto.tipoCalculo}
                                                     onChange={(e) => handleChange(index, 'tipoCalculo', e.target.value)}
-                                                    className="w-full px-2 py-1.5 border border-slate-300 rounded text-xs focus:ring-2 focus:ring-brand-primary focus:border-brand-primary outline-none transition"
+                                                    className="w-full px-2 py-1.5 border border-slate-300 rounded text-[10px] focus:ring-2 focus:ring-brand-primary focus:border-brand-primary outline-none transition"
                                                 >
                                                     <option value="unidades">Unidades / Fijo</option>
                                                     <option value="porcentaje">Porcentaje (%)</option>
                                                 </select>
                                             </td>
-                                            <td className="p-1.5">
+                                            <td className="p-1">
                                                 <select
                                                     value={concepto.tipoConcepto}
                                                     onChange={(e) => handleChange(index, 'tipoConcepto', e.target.value)}
-                                                    className="w-full px-2 py-1.5 border border-slate-300 rounded text-xs focus:ring-2 focus:ring-brand-primary focus:border-brand-primary outline-none transition"
+                                                    className="w-full px-2 py-1.5 border border-slate-300 rounded text-[10px] focus:ring-2 focus:ring-brand-primary focus:border-brand-primary outline-none transition"
                                                 >
                                                     <option value="remunerativo">Haberes</option>
                                                     <option value="no_remunerativo">No Remun.</option>
                                                     <option value="deduccion">Deducción</option>
                                                 </select>
                                             </td>
-                                            <td className="p-1.5 text-center">
+                                            <td className="p-1 text-center">
                                                 <button
                                                     onClick={() => handleRemoveConcept(index)}
-                                                    className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded transition"
+                                                    className="p-1 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded transition"
                                                     title="Eliminar concepto"
                                                 >
-                                                    <Trash2 size={16} />
+                                                    <Trash2 size={14} />
                                                 </button>
                                             </td>
                                         </tr>
@@ -177,13 +177,13 @@ const CompanyConceptsPage = () => {
                     )}
                 </div>
 
-                <div className="p-6 bg-gray-50 border-t border-slate-200 flex justify-end">
+                <div className="p-4 bg-gray-50 border-t border-slate-200 flex justify-end">
                     <button
                         onClick={handleSave}
                         disabled={loading}
-                        className="flex items-center gap-2 bg-[#0F2C4C] text-white px-6 py-2.5 rounded-lg hover:bg-[#1a4b80] transition font-bold shadow-md disabled:opacity-70"
+                        className="flex items-center gap-1.5 bg-[#0F2C4C] text-[10px] text-white px-4 py-2 rounded-lg hover:bg-[#1a4b80] transition font-bold shadow-md disabled:opacity-70"
                     >
-                        <Save size={18} />
+                        <Save size={14} />
                         {loading ? 'Guardando...' : 'Guardar Conceptos'}
                     </button>
                 </div>

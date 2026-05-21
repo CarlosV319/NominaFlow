@@ -56,7 +56,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                         }
                     >
                         <item.icon size={20} className="mr-3" />
-                        <span className="font-medium">{item.name}</span>
+                        <span className="font-medium text-[14px]">{item.name}</span>
                     </NavLink>
                 ))}
             </nav>

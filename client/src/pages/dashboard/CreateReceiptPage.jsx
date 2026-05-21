@@ -203,8 +203,8 @@ const CreateReceiptPage = () => {
                     <ArrowLeft size={20} />
                 </Link>
                 <div>
-                    <h1 className="font-bold text-[#0F2C4C]">Nuevo Recibo Automático</h1>
-                    <p className="text-gray-500">Motor de cálculo Ley Argentina 2026 para {activeCompany.razonSocial}</p>
+                    <h1 className="font-bold text-[#0F2C4C] text-[12px]">Nuevo Recibo Automático</h1>
+                    <p className="text-[10px] text-gray-500">Motor de cálculo Ley Argentina 2026 para {activeCompany.razonSocial}</p>
                 </div>
             </div>
 
@@ -214,17 +214,17 @@ const CreateReceiptPage = () => {
                 <div className="lg:col-span-8 space-y-6">
 
                     {/* 1. Selection Card */}
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                        <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-                            <Building size={18} className="text-brand-secondary" />
+                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                        <h3 className="font-bold text-[12px] text-gray-800 mb-3 flex items-center gap-2">
+                            <Building size={14} className="text-brand-secondary" />
                             Parámetros del Recibo
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Empleado</label>
+                                <label className="block text-[10px] font-medium text-gray-700 mb-1">Empleado</label>
                                 <select
                                     {...register('employeeId', { required: 'Requerido' })}
-                                    className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-secondary outline-none bg-gray-50"
+                                    className="w-full p-2 border border-gray-300 rounded text-[10px] focus:ring-2 focus:ring-brand-secondary outline-none bg-gray-50"
                                 >
                                     <option value="">-- Seleccionar Empleado --</option>
                                     {employees.map(emp => (
@@ -233,10 +233,10 @@ const CreateReceiptPage = () => {
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Liquidación</label>
+                                <label className="block text-[10px] font-medium text-gray-700 mb-1">Tipo de Liquidación</label>
                                 <select
                                     {...register('tipoLiquidacion')}
-                                    className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-secondary outline-none bg-blue-50 text-[#0F2C4C] font-semibold"
+                                    className="w-full p-2 border border-gray-300 rounded text-[10px] focus:ring-2 focus:ring-brand-secondary outline-none bg-blue-50 text-[#0F2C4C] font-semibold"
                                 >
                                     <option value="mensual">Mensual Ordinaria</option>
                                     <option value="sac">SAC (Aguinaldo)</option>
@@ -246,25 +246,25 @@ const CreateReceiptPage = () => {
                             </div>
                         </div>
                         
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Mes</label>
-                                <input type="number" {...register('periodo.mes')} className="w-full p-2 border border-gray-300 rounded-lg text-center" min="1" max="12" />
+                                <label className="block text-[10px] font-medium text-gray-700 mb-1">Mes</label>
+                                <input type="number" {...register('periodo.mes')} className="w-full p-1.5 border border-gray-300 rounded text-[10px] text-center" min="1" max="12" />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Año</label>
-                                <input type="number" {...register('periodo.anio')} className="w-full p-2 border border-gray-300 rounded-lg text-center" min="2020" />
+                                <label className="block text-[10px] font-medium text-gray-700 mb-1">Año</label>
+                                <input type="number" {...register('periodo.anio')} className="w-full p-1.5 border border-gray-300 rounded text-[10px] text-center" min="2020" />
                             </div>
 
                             {tipoLiquidacion === 'mensual' && (
                                 <>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Hs. Ext. 50%</label>
-                                        <input type="number" {...register('options.horasExtra50')} className="w-full p-2 border border-gray-300 rounded-lg text-center" min="0" />
+                                        <label className="block text-[10px] font-medium text-gray-700 mb-1">Hs. Ext. 50%</label>
+                                        <input type="number" {...register('options.horasExtra50')} className="w-full p-1.5 border border-gray-300 rounded text-[10px] text-center" min="0" />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Hs. Ext. 100%</label>
-                                        <input type="number" {...register('options.horasExtra100')} className="w-full p-2 border border-gray-300 rounded-lg text-center" min="0" />
+                                        <label className="block text-[10px] font-medium text-gray-700 mb-1">Hs. Ext. 100%</label>
+                                        <input type="number" {...register('options.horasExtra100')} className="w-full p-1.5 border border-gray-300 rounded text-[10px] text-center" min="0" />
                                     </div>
                                 </>
                             )}
@@ -272,20 +272,20 @@ const CreateReceiptPage = () => {
                             {tipoLiquidacion === 'sac' && (
                                 <>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Mejor Remun.</label>
-                                        <input type="number" {...register('options.mejorRemuneracion')} className="w-full p-2 border border-gray-300 rounded-lg text-center" />
+                                        <label className="block text-[10px] font-medium text-gray-700 mb-1">Mejor Remun.</label>
+                                        <input type="number" {...register('options.mejorRemuneracion')} className="w-full p-1.5 border border-gray-300 rounded text-[10px] text-center" />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Días Trabaj.</label>
-                                        <input type="number" {...register('options.diasTrabajadosSAC')} className="w-full p-2 border border-gray-300 rounded-lg text-center" />
+                                        <label className="block text-[10px] font-medium text-gray-700 mb-1">Días Trabaj.</label>
+                                        <input type="number" {...register('options.diasTrabajadosSAC')} className="w-full p-1.5 border border-gray-300 rounded text-[10px] text-center" />
                                     </div>
                                 </>
                             )}
 
                             {tipoLiquidacion === 'vacaciones' && (
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Días a gozar</label>
-                                    <input type="number" {...register('options.diasVacaciones')} className="w-full p-2 border border-gray-300 rounded-lg text-center" />
+                                    <label className="block text-[10px] font-medium text-gray-700 mb-1">Días a gozar</label>
+                                    <input type="number" {...register('options.diasVacaciones')} className="w-full p-1.5 border border-gray-300 rounded text-[10px] text-center" />
                                 </div>
                             )}
 
@@ -293,14 +293,14 @@ const CreateReceiptPage = () => {
 
                         {/* Employee Preview */}
                         {selectedEmployee && (
-                            <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-100 flex items-center justify-between text-sm">
+                            <div className="mt-4 p-3 bg-blue-50 rounded border border-blue-100 flex items-center justify-between text-[10px]">
                                 <div>
                                     <p><span className="font-bold text-[#0F2C4C]">CUIL:</span> {selectedEmployee.cuil}</p>
                                     <p><span className="font-bold text-[#0F2C4C]">Ingreso:</span> {new Date(selectedEmployee.fechaIngreso).toLocaleDateString()}</p>
                                 </div>
                                 <div className="text-right">
                                     <p><span className="font-bold text-[#0F2C4C]">Cargo:</span> {selectedEmployee.cargo}</p>
-                                    <p><span className="font-bold text-[#0F2C4C]">Sueldo Pactado:</span> ${selectedEmployee.sueldoBruto?.toLocaleString()}</p>
+                                    <p><span className="font-bold text-[12px] text-[#0F2C4C]">Sueldo Pactado:</span> <span className="font-bold text-[12px]">${selectedEmployee.sueldoBruto?.toLocaleString()}</span></p>
                                 </div>
                             </div>
                         )}
@@ -308,14 +308,14 @@ const CreateReceiptPage = () => {
 
                     {/* 2. Concepts Table */}
                     <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                        <div className="p-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
-                            <h3 className="font-bold text-gray-700">Conceptos</h3>
+                        <div className="p-3 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+                            <h3 className="font-bold text-[12px] text-gray-700">Conceptos</h3>
                             <button
                                 type="button"
                                 onClick={handleLoadConcepts}
-                                className="text-sm px-4 py-2 bg-[#E85D04] text-white rounded-lg hover:bg-[#d15403] font-bold shadow-md transition flex items-center gap-1"
+                                className="text-[10px] px-3 py-1.5 bg-[#E85D04] text-white rounded hover:bg-[#d15403] font-bold shadow-md transition flex items-center gap-1"
                             >
-                                <Zap size={16} /> Autocompletar Cálculo
+                                <Zap size={12} /> Autocompletar Cálculo
                             </button>
                         </div>
                         
@@ -328,14 +328,14 @@ const CreateReceiptPage = () => {
 
                         <div className="overflow-x-auto">
                             <table className="w-full text-left">
-                                <thead className="text-xs text-gray-500 uppercase bg-gray-50/50">
+                                <thead className="text-[10px] text-gray-500 uppercase bg-gray-50/50">
                                     <tr>
-                                        <th className="px-4 py-3 w-20">Códig</th>
-                                        <th className="px-4 py-3">Concepto</th>
-                                        <th className="px-4 py-3 w-24">Unidades</th>
-                                        <th className="px-4 py-3 w-32">Tipo</th>
-                                        <th className="px-4 py-3 w-32">Monto</th>
-                                        <th className="px-4 py-3 w-10"></th>
+                                        <th className="px-2 py-2 w-20">Códig</th>
+                                        <th className="px-2 py-2">Concepto</th>
+                                        <th className="px-2 py-2 w-24">Unidades</th>
+                                        <th className="px-2 py-2 w-32">Tipo</th>
+                                        <th className="px-2 py-2 w-32">Monto</th>
+                                        <th className="px-2 py-2 w-10"></th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-100">
@@ -412,9 +412,9 @@ const CreateReceiptPage = () => {
                         <button
                             type="button"
                             onClick={() => append({ codigo: '', concepto: '', unidades: 0, tipo: 'remunerativo', monto: 0 })}
-                            className="w-full py-3 text-center text-sm font-semibold text-[#0F2C4C] bg-gray-50 hover:bg-blue-50 transition border-t border-gray-100 flex items-center justify-center gap-2"
+                            className="w-full py-2.5 text-center text-[10px] font-semibold text-[#0F2C4C] bg-gray-50 hover:bg-blue-50 transition border-t border-gray-100 flex items-center justify-center gap-1.5"
                         >
-                            <Plus size={16} /> Agregar Concepto Manual
+                            <Plus size={14} /> Agregar Concepto Manual
                         </button>
                     </div>
 
@@ -422,29 +422,29 @@ const CreateReceiptPage = () => {
 
                 {/* Right Column: Totals (4 cols) - Sticky */}
                 <div className="lg:col-span-4 space-y-6">
-                    <div className="bg-white rounded-xl shadow-lg border-2 border-orange-100 p-6 sticky top-6">
-                        <h3 className="font-bold text-gray-700 mb-6 flex items-center gap-2 border-b pb-4">
-                            <Calculator size={20} className="text-[#E85D04]" /> Resumen
+                    <div className="bg-white rounded-xl shadow-lg border-2 border-orange-100 p-4 sticky top-6">
+                        <h3 className="font-bold text-[12px] text-gray-700 mb-4 flex items-center gap-2 border-b pb-3">
+                            <Calculator size={16} className="text-[#E85D04]" /> Resumen
                         </h3>
 
-                        <div className="space-y-4 mb-8">
-                            <div className="flex justify-between text-sm text-gray-600">
+                        <div className="space-y-3 mb-6">
+                            <div className="flex justify-between text-[10px] text-gray-600">
                                 <span>Total Haberes Remun.</span>
-                                <span className="font-mono text-gray-900">${totals.remunerativo.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                                <span className="font-mono text-[10px] text-gray-900">${totals.remunerativo.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                             </div>
-                            <div className="flex justify-between text-sm text-gray-600">
+                            <div className="flex justify-between text-[10px] text-gray-600">
                                 <span>Total No Remunerativo</span>
-                                <span className="font-mono text-gray-900">${totals.no_remunerativo.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                                <span className="font-mono text-[10px] text-gray-900">${totals.no_remunerativo.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                             </div>
-                            <div className="flex justify-between text-sm text-red-500 font-medium">
+                            <div className="flex justify-between text-[10px] text-red-500 font-medium">
                                 <span>Total Descuentos</span>
-                                <span className="font-mono">- ${totals.descuentos.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                                <span className="font-mono text-[10px]">- ${totals.descuentos.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                             </div>
 
-                            <div className="border-t border-dashed border-gray-300 pt-4 mt-2">
+                            <div className="border-t border-dashed border-gray-300 pt-3 mt-1.5">
                                 <div className="flex justify-between items-end">
-                                    <span className="font-bold text-lg text-[#0F2C4C]">NETO A COBRAR</span>
-                                    <span className="font-bold text-2xl text-[#E85D04] font-mono">
+                                    <span className="font-bold text-[12px] text-[#0F2C4C]">NETO A COBRAR</span>
+                                    <span className="font-bold text-[12px] text-[#E85D04] font-mono">
                                         ${totalNeto.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                                     </span>
                                 </div>
@@ -453,9 +453,9 @@ const CreateReceiptPage = () => {
 
                         {/* Costo Laboral Empleador (Transparencia) */}
                         {contribucionesPatronales && (
-                            <div className="mb-6 p-4 bg-gray-50 rounded-xl border border-gray-200">
-                                <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Costo Laboral Empleador</h4>
-                                <div className="space-y-1 text-xs text-gray-600">
+                            <div className="mb-4 p-3 bg-gray-50 rounded border border-gray-200">
+                                <h4 className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2">Costo Laboral Empleador</h4>
+                                <div className="space-y-1 text-[10px] text-gray-600">
                                     <div className="flex justify-between">
                                         <span>Contrib. Jubilación:</span>
                                         <span>${contribucionesPatronales.jubilacion.toLocaleString()}</span>
@@ -479,7 +479,7 @@ const CreateReceiptPage = () => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className={`w-full py-4 text-white font-bold rounded-xl shadow-xl transition-all flex items-center justify-center gap-3
+                            className={`w-full py-2.5 text-[10px] text-white font-bold rounded shadow-xl transition-all flex items-center justify-center gap-2
                                 ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#0F2C4C] hover:bg-[#1C3E61] hover:-translate-y-1 hover:shadow-2xl'}
                             `}
                         >
@@ -487,7 +487,7 @@ const CreateReceiptPage = () => {
                                 'Generando...'
                             ) : (
                                 <>
-                                    <Save size={20} /> Generar Recibo
+                                    <Save size={14} /> Generar Recibo
                                 </>
                             )}
                         </button>
