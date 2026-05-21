@@ -16,6 +16,7 @@ import ReceiptPreviewPage from './pages/dashboard/ReceiptPreviewPage';
 import DashboardHome from './pages/dashboard/DashboardHome';
 import SettingsPage from './pages/dashboard/SettingsPage';
 import CompanyConceptsPage from './pages/dashboard/CompanyConceptsPage';
+import SuperAdminPage from './pages/dashboard/SuperAdminPage';
 
 
 import HomePage from './pages/HomePage';
@@ -64,6 +65,7 @@ function App() {
             <Route path="receipts/new" element={<CreateReceiptPage />} />
             <Route path="receipts/:id/preview" element={<ReceiptPreviewPage />} />
             <Route path="settings" element={<SettingsPage />} />
+            <Route path="superadmin" element={<SuperAdminPage />} />
           </Route>
 
           {/* Fallback */}

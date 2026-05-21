@@ -1,11 +1,12 @@
 import React from 'react';
 import { NavLink, Link } from 'react-router-dom';
-import { LayoutDashboard, Building, Users, FileText, Settings, X, Building2, Settings2 } from 'lucide-react';
+import { LayoutDashboard, Building, Users, FileText, Settings, X, Building2, Settings2, ShieldCheck } from 'lucide-react';
 import { useAppSelector } from '../../hooks/useRedux';
 import QuotaIndicator from '../dashboard/QuotaIndicator';
 
 const Sidebar = ({ isOpen, onClose }) => {
     const { activeCompany } = useAppSelector((state) => state.company);
+    const { user } = useAppSelector((state) => state.auth);
 
     const baseNavItems = [
         { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
@@ -21,6 +22,10 @@ const Sidebar = ({ isOpen, onClose }) => {
     const footerNavItems = [
         { name: 'Configuración', path: '/dashboard/settings', icon: Settings },
     ];
+
+    if (user?.role === 'SUPERADMIN') {
+        footerNavItems.push({ name: 'Admin SaaS', path: '/dashboard/superadmin', icon: ShieldCheck });
+    }
 
     const navItems = [...baseNavItems, ...companyNavItems, ...footerNavItems];
 

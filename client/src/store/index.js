@@ -4,12 +4,15 @@ import companyReducer from './slices/companySlice';
 import employeeReducer from './slices/employeeSlice';
 import receiptReducer from './slices/receiptSlice';
 
+import adminReducer from './slices/adminSlice';
+
 export const store = configureStore({
     reducer: {
         auth: authReducer,
         company: companyReducer,
         employee: employeeReducer,
         receipt: receiptReducer,
+        admin: adminReducer,
     },
     devTools: process.env.NODE_ENV !== 'production',
 });
