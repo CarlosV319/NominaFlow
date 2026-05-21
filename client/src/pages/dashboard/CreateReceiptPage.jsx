@@ -13,6 +13,7 @@ import {
 import { Building, Plus, Trash2, Calculator, Save, ArrowLeft, Zap } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { Link } from 'react-router-dom';
+import { useSubscription } from '../../hooks/useSubscription';
 
 const CreateReceiptPage = () => {
     const dispatch = useAppDispatch();
@@ -20,6 +21,7 @@ const CreateReceiptPage = () => {
     const { activeCompany } = useAppSelector((state) => state.company);
     const { employees } = useAppSelector((state) => state.employee);
     const { loading, error } = useAppSelector((state) => state.receipt);
+    const { refreshSubscription } = useSubscription();
 
     // States for Employer Costs & Ganancias tracking
     const [contribucionesPatronales, setContribucionesPatronales] = useState(null);
@@ -181,6 +183,7 @@ const CreateReceiptPage = () => {
 
         try {
             const res = await dispatch(createReceipt(payload)).unwrap();
+            await refreshSubscription();
             toast.success('Recibo generado correctamente');
             navigate(`/dashboard/receipts/${res._id}/preview`);
         } catch (err) {
