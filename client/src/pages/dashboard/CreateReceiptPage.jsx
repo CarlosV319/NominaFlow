@@ -1,10 +1,16 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm, useFieldArray, useWatch } from 'react-hook-form';
 import { useAppDispatch, useAppSelector } from '../../hooks/useRedux';
 import { useNavigate } from 'react-router-dom';
 import { fetchEmployees } from '../../store/slices/employeeSlice';
-import { createReceipt, resetReceiptStatus } from '../../store/slices/receiptSlice';
-import { Building, Plus, Trash2, Calculator, Save, ArrowLeft } from 'lucide-react';
+import { 
+    createReceipt, 
+    calculateReceipt, 
+    calculateSACReceipt, 
+    calculateVacacionesReceipt, 
+    calculateFinalReceipt 
+} from '../../store/slices/receiptSlice';
+import { Building, Plus, Trash2, Calculator, Save, ArrowLeft, Zap } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 
@@ -13,15 +19,33 @@ const CreateReceiptPage = () => {
     const navigate = useNavigate();
     const { activeCompany } = useAppSelector((state) => state.company);
     const { employees } = useAppSelector((state) => state.employee);
-    const { loading, success, error } = useAppSelector((state) => state.receipt);
+    const { loading, error } = useAppSelector((state) => state.receipt);
+
+    // States for Employer Costs & Ganancias tracking
+    const [contribucionesPatronales, setContribucionesPatronales] = useState(null);
+    const [gananciasDetalle, setGananciasDetalle] = useState(null);
 
     // Initial Setup
     const { register, control, handleSubmit, setValue, watch, formState: { errors } } = useForm({
         defaultValues: {
             employeeId: '',
+            tipoLiquidacion: 'mensual',
             periodo: {
                 mes: new Date().getMonth() + 1,
                 anio: new Date().getFullYear(),
+            },
+            options: {
+                diasTrabajados: 30,
+                horasExtra50: 0,
+                horasExtra100: 0,
+                incluirPresentismo: true,
+                incluirAntiguedad: true,
+                calcularGanancias: true,
+                // SAC Specific
+                mejorRemuneracion: 0,
+                diasTrabajadosSAC: 180,
+                // Vacaciones Specific
+                diasVacaciones: 14,
             },
             items: [
                 { codigo: '1000', concepto: 'Sueldo Básico', unidades: 30, tipo: 'remunerativo', monto: 0 }
@@ -34,9 +58,11 @@ const CreateReceiptPage = () => {
         name: 'items'
     });
 
-    // Real-time Totals Watcher
+    // Watchers
     const items = useWatch({ control, name: 'items' });
     const selectedEmployeeId = useWatch({ control, name: 'employeeId' });
+    const tipoLiquidacion = useWatch({ control, name: 'tipoLiquidacion' });
+    const options = useWatch({ control, name: 'options' });
 
     // Derived State for UI
     const selectedEmployee = employees.find(e => e._id === selectedEmployeeId);
@@ -59,43 +85,79 @@ const CreateReceiptPage = () => {
         }
     }, [activeCompany, dispatch]);
 
-
-
     useEffect(() => {
-        if (error) toast.error(typeof error === 'string' ? error : 'Error al generar recibo');
+        if (error) toast.error(typeof error === 'string' ? error : 'Error en el recibo');
     }, [error]);
 
     useEffect(() => {
-        if (selectedEmployee && selectedEmployee.sueldoBruto) {
-            // Auto-update concept 1000 amount if present and 0
+        if (selectedEmployee && selectedEmployee.sueldoBruto && tipoLiquidacion === 'mensual') {
             const currentItems = items;
             if (currentItems[0] && currentItems[0].codigo === '1000' && currentItems[0].monto == 0) {
                 setValue(`items.0.monto`, selectedEmployee.sueldoBruto);
             }
         }
-    }, [selectedEmployee, setValue]);
+    }, [selectedEmployee, tipoLiquidacion, setValue]);
 
 
     // Handlers
-    const handleLoadConcepts = () => {
+    const handleLoadConcepts = async () => {
         if (!selectedEmployee) return toast.error('Selecciona un empleado primero');
 
-        const bruto = selectedEmployee.sueldoBruto || 0;
-        const jubilacion = bruto * 0.11;
-        const ley19032 = bruto * 0.03;
-        const obraSocial = bruto * 0.03;
+        const formData = watch();
+        const payload = {
+            employeeId: selectedEmployee._id,
+            periodo: {
+                mes: Number(formData.periodo.mes),
+                anio: Number(formData.periodo.anio)
+            },
+            options: formData.options
+        };
 
-        setValue('items', [
-            { codigo: '1000', concepto: 'Sueldo Básico', unidades: 30, tipo: 'remunerativo', monto: bruto },
-            { codigo: '8100', concepto: 'Jubilación', unidades: 11, tipo: 'deduccion', monto: jubilacion },
-            { codigo: '8200', concepto: 'Ley 19.032', unidades: 3, tipo: 'deduccion', monto: ley19032 },
-            { codigo: '8300', concepto: 'Obra Social', unidades: 3, tipo: 'deduccion', monto: obraSocial },
-        ]);
-        toast.success('Conceptos base cargados');
+        try {
+            let res;
+            if (tipoLiquidacion === 'mensual') {
+                res = await dispatch(calculateReceipt(payload)).unwrap();
+            } else if (tipoLiquidacion === 'sac') {
+                payload.mejorRemuneracion = Number(formData.options.mejorRemuneracion);
+                payload.diasTrabajados = Number(formData.options.diasTrabajadosSAC);
+                res = await dispatch(calculateSACReceipt(payload)).unwrap();
+            } else if (tipoLiquidacion === 'vacaciones') {
+                payload.options.diasProporcionales = Number(formData.options.diasVacaciones);
+                res = await dispatch(calculateVacacionesReceipt(payload)).unwrap();
+            } else if (tipoLiquidacion === 'final') {
+                payload.options.diasTrabajadosMes = Number(formData.options.diasTrabajados);
+                const finalRes = await dispatch(calculateFinalReceipt(payload)).unwrap();
+                
+                // Map breakdown to items array
+                const mappedItems = Object.entries(finalRes.desglose).map(([key, item], index) => ({
+                    codigo: `9${index}00`,
+                    concepto: item.concepto,
+                    unidades: 0,
+                    tipo: key === 'sueldoProporcional' ? 'remunerativo' : 'no_remunerativo', // Depende del rubro pero simplificamos
+                    monto: item.monto
+                }));
+                
+                setValue('items', mappedItems);
+                toast.success('Liquidación Final calculada');
+                return;
+            }
+
+            if (res) {
+                setValue('items', res.items);
+                setContribucionesPatronales(res.contribucionesPatronales);
+                if (res.gananciasDetalle) {
+                    setGananciasDetalle(res.gananciasDetalle);
+                }
+                toast.success('Conceptos base calculados automáticamente');
+            }
+
+        } catch (err) {
+            console.error(err);
+            toast.error('No se pudieron calcular los conceptos');
+        }
     };
 
     const onSubmit = async (data) => {
-        // Transform data for Backend
         const formattedItems = data.items.map(item => ({
             codigo: item.codigo,
             concepto: item.concepto,
@@ -111,7 +173,10 @@ const CreateReceiptPage = () => {
                 mes: Number(data.periodo.mes),
                 anio: Number(data.periodo.anio)
             },
-            items: formattedItems
+            tipoLiquidacion: data.tipoLiquidacion,
+            items: formattedItems,
+            contribucionesPatronales,
+            gananciasDetalle
         };
 
         try {
@@ -119,7 +184,6 @@ const CreateReceiptPage = () => {
             toast.success('Recibo generado correctamente');
             navigate(`/dashboard/receipts/${res._id}/preview`);
         } catch (err) {
-            // Error is handled by slice/toast in useEffect or here
             console.error(err);
         }
     };
@@ -136,8 +200,8 @@ const CreateReceiptPage = () => {
                     <ArrowLeft size={20} />
                 </Link>
                 <div>
-                    <h1 className="font-bold text-[#0F2C4C]">Nuevo Recibo</h1>
-                    <p className="text-gray-500">Generación de liquidación para {activeCompany.razonSocial}</p>
+                    <h1 className="font-bold text-[#0F2C4C]">Nuevo Recibo Automático</h1>
+                    <p className="text-gray-500">Motor de cálculo Ley Argentina 2026 para {activeCompany.razonSocial}</p>
                 </div>
             </div>
 
@@ -150,7 +214,7 @@ const CreateReceiptPage = () => {
                     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                         <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
                             <Building size={18} className="text-brand-secondary" />
-                            Datos del Recibo
+                            Parámetros del Recibo
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
@@ -165,16 +229,63 @@ const CreateReceiptPage = () => {
                                     ))}
                                 </select>
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Mes</label>
-                                    <input type="number" {...register('periodo.mes')} className="w-full p-2.5 border border-gray-300 rounded-lg text-center" min="1" max="12" />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Año</label>
-                                    <input type="number" {...register('periodo.anio')} className="w-full p-2.5 border border-gray-300 rounded-lg text-center" min="2020" />
-                                </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Liquidación</label>
+                                <select
+                                    {...register('tipoLiquidacion')}
+                                    className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-secondary outline-none bg-blue-50 text-[#0F2C4C] font-semibold"
+                                >
+                                    <option value="mensual">Mensual Ordinaria</option>
+                                    <option value="sac">SAC (Aguinaldo)</option>
+                                    <option value="vacaciones">Vacaciones</option>
+                                    <option value="final">Liquidación Final por Despido</option>
+                                </select>
                             </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Mes</label>
+                                <input type="number" {...register('periodo.mes')} className="w-full p-2 border border-gray-300 rounded-lg text-center" min="1" max="12" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Año</label>
+                                <input type="number" {...register('periodo.anio')} className="w-full p-2 border border-gray-300 rounded-lg text-center" min="2020" />
+                            </div>
+
+                            {tipoLiquidacion === 'mensual' && (
+                                <>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Hs. Ext. 50%</label>
+                                        <input type="number" {...register('options.horasExtra50')} className="w-full p-2 border border-gray-300 rounded-lg text-center" min="0" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Hs. Ext. 100%</label>
+                                        <input type="number" {...register('options.horasExtra100')} className="w-full p-2 border border-gray-300 rounded-lg text-center" min="0" />
+                                    </div>
+                                </>
+                            )}
+                            
+                            {tipoLiquidacion === 'sac' && (
+                                <>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Mejor Remun.</label>
+                                        <input type="number" {...register('options.mejorRemuneracion')} className="w-full p-2 border border-gray-300 rounded-lg text-center" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Días Trabaj.</label>
+                                        <input type="number" {...register('options.diasTrabajadosSAC')} className="w-full p-2 border border-gray-300 rounded-lg text-center" />
+                                    </div>
+                                </>
+                            )}
+
+                            {tipoLiquidacion === 'vacaciones' && (
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Días a gozar</label>
+                                    <input type="number" {...register('options.diasVacaciones')} className="w-full p-2 border border-gray-300 rounded-lg text-center" />
+                                </div>
+                            )}
+
                         </div>
 
                         {/* Employee Preview */}
@@ -199,9 +310,9 @@ const CreateReceiptPage = () => {
                             <button
                                 type="button"
                                 onClick={handleLoadConcepts}
-                                className="text-xs px-3 py-1.5 bg-white border border-brand-secondary text-brand-secondary rounded-md hover:bg-orange-50 font-medium transition"
+                                className="text-sm px-4 py-2 bg-[#E85D04] text-white rounded-lg hover:bg-[#d15403] font-bold shadow-md transition flex items-center gap-1"
                             >
-                                ⚡ Cargar Conceptos Base
+                                <Zap size={16} /> Autocompletar Cálculo
                             </button>
                         </div>
 
@@ -269,7 +380,7 @@ const CreateReceiptPage = () => {
                             onClick={() => append({ codigo: '', concepto: '', unidades: 0, tipo: 'remunerativo', monto: 0 })}
                             className="w-full py-3 text-center text-sm font-semibold text-[#0F2C4C] bg-gray-50 hover:bg-blue-50 transition border-t border-gray-100 flex items-center justify-center gap-2"
                         >
-                            <Plus size={16} /> Agregar Concepto
+                            <Plus size={16} /> Agregar Concepto Manual
                         </button>
                     </div>
 
@@ -305,6 +416,31 @@ const CreateReceiptPage = () => {
                                 </div>
                             </div>
                         </div>
+
+                        {/* Costo Laboral Empleador (Transparencia) */}
+                        {contribucionesPatronales && (
+                            <div className="mb-6 p-4 bg-gray-50 rounded-xl border border-gray-200">
+                                <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Costo Laboral Empleador</h4>
+                                <div className="space-y-1 text-xs text-gray-600">
+                                    <div className="flex justify-between">
+                                        <span>Contrib. Jubilación:</span>
+                                        <span>${contribucionesPatronales.jubilacion.toLocaleString()}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span>Obra Social:</span>
+                                        <span>${contribucionesPatronales.obraSocial.toLocaleString()}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span>ART / Seguros:</span>
+                                        <span>${(contribucionesPatronales.artFijo + contribucionesPatronales.scvo).toLocaleString()}</span>
+                                    </div>
+                                    <div className="flex justify-between font-bold text-gray-800 pt-1 mt-1 border-t border-gray-200">
+                                        <span>Costo Extra Total:</span>
+                                        <span>${contribucionesPatronales.total.toLocaleString()}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
 
                         <button
                             type="submit"

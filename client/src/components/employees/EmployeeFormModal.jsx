@@ -22,6 +22,15 @@ const employeeSchema = z.object({
     // Bank Logic
     banco: z.string().optional(),
     cbu: z.string().regex(/^\d{22}$/, 'CBU debe tener 22 números'),
+
+    // Nuevos campos normativos 2026
+    obraSocial: z.string().optional(),
+    sindicato: z.string().optional(),
+    cuotaSindical: z.coerce.number().min(0).max(100).optional().default(0),
+    conyuge: z.boolean().optional().default(false),
+    hijos: z.coerce.number().min(0).optional().default(0),
+    hijosDiscapacitados: z.coerce.number().min(0).optional().default(0),
+    estado: z.string().optional().default('activo'),
 });
 
 const EmployeeFormModal = ({ isOpen, onClose, onCreate, loading, activeCompanyId }) => {
@@ -41,8 +50,14 @@ const EmployeeFormModal = ({ isOpen, onClose, onCreate, loading, activeCompanyId
     });
 
     const onSubmit = (data) => {
+        // Construir objeto cargasFamilia
+        const cargasFamilia = {
+            conyuge: data.conyuge || false,
+            hijos: data.hijos || 0,
+            hijosDiscapacitados: data.hijosDiscapacitados || 0
+        };
         // Inject company ID
-        onCreate({ ...data, company: activeCompanyId });
+        onCreate({ ...data, company: activeCompanyId, cargasFamilia });
         reset();
     };
 
@@ -128,6 +143,34 @@ const EmployeeFormModal = ({ isOpen, onClose, onCreate, loading, activeCompanyId
                                 <div className="lg:col-span-1">
                                     <InputGroup label="Bruto" name="sueldoBruto" type="number" step="0.01" register={register} error={errors.sueldoBruto} success={dirtyFields.sueldoBruto && !errors.sueldoBruto} />
                                 </div>
+                            </div>
+                        </div>
+
+                        {/* Section 3: Normativa y Adicionales (Fase 4) */}
+                        <div className="border border-gray-200 rounded-xl p-4 bg-purple-50/20">
+                            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-purple-500"></span> Datos Sindicales y Cargas Familiares
+                            </h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                                <InputGroup label="Obra Social" name="obraSocial" placeholder="Ej: OSECAC" register={register} error={errors.obraSocial} />
+                                <InputGroup label="Sindicato" name="sindicato" placeholder="Ej: SEC" register={register} error={errors.sindicato} />
+                                <InputGroup label="Cuota Sindical (%)" name="cuotaSindical" type="number" step="0.1" register={register} error={errors.cuotaSindical} />
+                                <div>
+                                    <label className="block text-xs font-semibold text-gray-700 mb-1">Estado</label>
+                                    <select {...register('estado')} className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-brand-secondary">
+                                        <option value="activo">Activo</option>
+                                        <option value="licencia">Licencia</option>
+                                        <option value="baja">Baja</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3">
+                                <div className="flex items-center gap-2 h-full mt-4">
+                                    <input type="checkbox" id="conyuge" {...register('conyuge')} className="w-4 h-4 text-brand-secondary rounded focus:ring-brand-secondary" />
+                                    <label htmlFor="conyuge" className="text-sm font-semibold text-gray-700">Posee Cónyuge (Deducible)</label>
+                                </div>
+                                <InputGroup label="Cant. Hijos (< 18)" name="hijos" type="number" register={register} error={errors.hijos} />
+                                <InputGroup label="Cant. Hijos Discapacitados" name="hijosDiscapacitados" type="number" register={register} error={errors.hijosDiscapacitados} />
                             </div>
                         </div>
 

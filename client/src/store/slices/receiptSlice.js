@@ -13,6 +13,56 @@ export const createReceipt = createAsyncThunk(
     }
 );
 
+// ─── THUNKS DE CÁLCULO ────────────────────────────────────────
+
+export const calculateReceipt = createAsyncThunk(
+    'receipts/calculate',
+    async (calcData, { rejectWithValue }) => {
+        try {
+            const response = await api.post('/receipts/calculate', calcData);
+            return response.data.data;
+        } catch (err) {
+            return rejectWithValue(err.response?.data?.message || 'Error al calcular liquidación mensual');
+        }
+    }
+);
+
+export const calculateSACReceipt = createAsyncThunk(
+    'receipts/calculateSAC',
+    async (calcData, { rejectWithValue }) => {
+        try {
+            const response = await api.post('/receipts/calculate-sac', calcData);
+            return response.data.data;
+        } catch (err) {
+            return rejectWithValue(err.response?.data?.message || 'Error al calcular SAC');
+        }
+    }
+);
+
+export const calculateVacacionesReceipt = createAsyncThunk(
+    'receipts/calculateVacaciones',
+    async (calcData, { rejectWithValue }) => {
+        try {
+            const response = await api.post('/receipts/calculate-vacaciones', calcData);
+            return response.data.data;
+        } catch (err) {
+            return rejectWithValue(err.response?.data?.message || 'Error al calcular Vacaciones');
+        }
+    }
+);
+
+export const calculateFinalReceipt = createAsyncThunk(
+    'receipts/calculateFinal',
+    async (calcData, { rejectWithValue }) => {
+        try {
+            const response = await api.post('/receipts/calculate-final', calcData);
+            return response.data.data;
+        } catch (err) {
+            return rejectWithValue(err.response?.data?.message || 'Error al calcular Liquidación Final');
+        }
+    }
+);
+
 export const fetchReceipts = createAsyncThunk(
     'receipts/fetch',
     async (filters, { rejectWithValue }) => {

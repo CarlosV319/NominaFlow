@@ -107,7 +107,9 @@ const ReceiptPreviewPage = () => {
                                 </p>
                             </div>
                             <div className="w-1/3 border border-slate-300 rounded bg-gray-50 p-1.5 flex flex-col items-center justify-center gap-0.5 shadow-sm min-w-0">
-                                <h2 className="text-[10px] font-bold uppercase tracking-wider text-slate-800 whitespace-nowrap">Recibo de Haberes</h2>
+                                <h2 className="text-[10px] font-bold uppercase tracking-wider text-slate-800 whitespace-nowrap">
+                                    Liquidación {receipt.tipoLiquidacion === 'sac' ? 'S.A.C.' : receipt.tipoLiquidacion === 'vacaciones' ? 'Vacaciones' : receipt.tipoLiquidacion === 'final' ? 'Final' : 'Mensual'}
+                                </h2>
                                 <div className="flex gap-2 mt-0.5 justify-center w-full">
                                     <div className="text-center min-w-0 flex-1">
                                         <span className="block text-[7px] uppercase text-slate-500 font-bold tracking-tight">Período</span>
@@ -258,6 +260,20 @@ const ReceiptPreviewPage = () => {
                         <Printer size={18} /> Imprimir
                     </button>
                     {/* Reuse PDF download logic if needed, or just rely on Print to PDF */}
+                </div>
+            </div>
+
+            {/* Costo Laboral Empleador Info Box */}
+            <div className="w-full max-w-[210mm] mx-auto mt-6 bg-orange-50 rounded-lg shadow-sm border border-orange-200 p-4 print:hidden">
+                <h3 className="text-sm font-bold text-[#E85D04] mb-2 uppercase tracking-wide">Transparencia: Costo Laboral Real (Para el Empleador)</h3>
+                <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 text-sm">
+                    <div><span className="text-gray-600 block text-xs uppercase">Neto al Empleado</span> <span className="font-bold text-gray-900">${receipt.totales.totalNeto.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span></div>
+                    <div><span className="text-gray-600 block text-xs uppercase">Aportes Retenidos (AFIP)</span> <span className="font-bold text-gray-900">${receipt.totales.totalDescuentos.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span></div>
+                    <div><span className="text-gray-600 block text-xs uppercase">Contrib. Patronales (AFIP)</span> <span className="font-bold text-gray-900">${(receipt.contribucionesPatronales?.total || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span></div>
+                    <div className="border-l border-orange-200 pl-4 sm:pl-8">
+                        <span className="text-[#0F2C4C] block text-xs uppercase font-bold">Costo Total Empresa</span> 
+                        <span className="font-bold text-xl text-[#0F2C4C]">${(receipt.totales.totalBruto + (receipt.contribucionesPatronales?.total || 0)).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                    </div>
                 </div>
             </div>
 

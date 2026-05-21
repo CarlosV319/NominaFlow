@@ -10,6 +10,8 @@ const companySchema = z.object({
     cuit: z.string().regex(/^\d{11}$/, 'CUIT inválido (Debe contener 11 números sin guiones)'),
     domicilio: z.string().min(5, 'El domicilio es requerido'),
     inicioActividades: z.string().refine((val) => !isNaN(Date.parse(val)), "Fecha inválida"),
+    tipoEmpleador: z.string().optional().default('mipyme'),
+    cct: z.string().optional().default(''),
 });
 
 const CreateCompanyModal = ({ isOpen, onClose, onCreate, loading }) => {
@@ -79,6 +81,33 @@ const CreateCompanyModal = ({ isOpen, onClose, onCreate, loading }) => {
                         register={register}
                         error={errors.inicioActividades}
                     />
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-gray-100">
+                        <div className="flex flex-col">
+                            <label className="text-xs font-semibold text-gray-700 mb-1">Tipo de Empleador (Contribuciones)</label>
+                            <select
+                                {...register('tipoEmpleador')}
+                                className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-secondary/20"
+                            >
+                                <option value="mipyme">MiPyME y Otros (18%)</option>
+                                <option value="gran_empresa_servicios">Servicios/Comercio Gran Empresa (20.4%)</option>
+                            </select>
+                        </div>
+                        <div className="flex flex-col">
+                            <label className="text-xs font-semibold text-gray-700 mb-1">Convenio Colectivo Principal</label>
+                            <select
+                                {...register('cct')}
+                                className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-secondary/20"
+                            >
+                                <option value="">Fuera de Convenio</option>
+                                <option value="130/75">Empleados de Comercio (130/75)</option>
+                                <option value="260/75">Metalúrgicos UOM (260/75)</option>
+                                <option value="40/89">Camioneros (40/89)</option>
+                                <option value="389/04">Gastronómicos UTHGRA (389/04)</option>
+                                <option value="76/75">Construcción UOCRA (76/75)</option>
+                            </select>
+                        </div>
+                    </div>
 
                     <div className="flex gap-3 pt-4">
                         <button
