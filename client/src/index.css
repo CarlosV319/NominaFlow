@@ -31,27 +31,12 @@
 }
 
 @layer base {
-    :root {
-        --font-h1: 1rem;
-        --font-subtitle: 0.9rem;
-        --font-p: 10px;
+    body {
+        @apply text-sm text-slate-800 bg-slate-50 antialiased;
     }
 
-    h1 {
-        font-size: var(--font-h1);
-    }
-
-    h2,
-    h3,
-    h4,
-    h5,
-    h6,
-    .subtitle {
-        font-size: var(--font-subtitle);
-    }
-
-    p {
-        font-size: var(--font-p);
+    h1, h2, h3, h4, h5, h6 {
+        @apply text-slate-900 tracking-tight;
     }
 }
 

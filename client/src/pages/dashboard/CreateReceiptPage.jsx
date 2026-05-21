@@ -50,7 +50,7 @@ const CreateReceiptPage = () => {
                 diasVacaciones: 14,
             },
             items: [
-                { codigo: '1000', concepto: 'Sueldo Básico', unidades: 30, tipo: 'remunerativo', monto: 0 }
+                { codigo: '1000', concepto: 'Sueldo Básico', unidades: 30, tipo: 'remunerativo', monto: 0, tipoCalculo: 'unidades' }
             ]
         }
     });
@@ -318,6 +318,13 @@ const CreateReceiptPage = () => {
                                 <Zap size={16} /> Autocompletar Cálculo
                             </button>
                         </div>
+                        
+                        {/* Datalist for custom concepts */}
+                        <datalist id="company-concepts">
+                            {activeCompany?.conceptosPersonalizados?.map((c, i) => (
+                                <option key={i} value={c.concepto}>Cód: {c.codigo}</option>
+                            ))}
+                        </datalist>
 
                         <div className="overflow-x-auto">
                             <table className="w-full text-left">
@@ -334,40 +341,64 @@ const CreateReceiptPage = () => {
                                 <tbody className="divide-y divide-gray-100">
                                     {fields.map((field, index) => (
                                         <tr key={field.id} className="hover:bg-gray-50/50 group">
-                                            <td className="p-2">
-                                                <input {...register(`items.${index}.codigo`)} className="w-full p-2 border border-transparent hover:border-gray-300 rounded bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-secondary transition" placeholder="Cod" />
+                                            <td className="p-1">
+                                                <input {...register(`items.${index}.codigo`)} className="w-full py-1.5 px-2 text-xs border border-transparent hover:border-gray-300 rounded bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-secondary transition" placeholder="Cod" />
                                             </td>
-                                            <td className="p-2">
-                                                <input {...register(`items.${index}.concepto`)} className="w-full p-2 border border-transparent hover:border-gray-300 rounded bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-secondary transition" placeholder="Descripción del concepto" />
+                                            <td className="p-1">
+                                                <input 
+                                                    {...register(`items.${index}.concepto`)} 
+                                                    list="company-concepts"
+                                                    onChange={(e) => {
+                                                        const val = e.target.value;
+                                                        setValue(`items.${index}.concepto`, val);
+                                                        const matchedConcept = activeCompany?.conceptosPersonalizados?.find(c => c.concepto === val);
+                                                        if (matchedConcept) {
+                                                            setValue(`items.${index}.codigo`, matchedConcept.codigo);
+                                                            setValue(`items.${index}.tipo`, matchedConcept.tipoConcepto);
+                                                            setValue(`items.${index}.tipoCalculo`, matchedConcept.tipoCalculo);
+                                                        }
+                                                    }}
+                                                    className="w-full py-1.5 px-2 text-xs border border-transparent hover:border-gray-300 rounded bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-secondary transition" 
+                                                    placeholder="Descripción del concepto" 
+                                                />
                                             </td>
-                                            <td className="p-2">
-                                                <input {...register(`items.${index}.unidades`)} className="w-full p-2 text-center border border-transparent hover:border-gray-300 rounded bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-secondary transition" placeholder="0" />
+                                            <td className="p-1">
+                                                <div className="relative flex items-center">
+                                                    <input 
+                                                        {...register(`items.${index}.unidades`)} 
+                                                        className={`w-full py-1.5 px-2 text-xs border border-transparent hover:border-gray-300 rounded bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-secondary transition ${items[index]?.tipoCalculo === 'porcentaje' ? 'text-right pr-6' : 'text-center'}`} 
+                                                        placeholder="0" 
+                                                    />
+                                                    {items[index]?.tipoCalculo === 'porcentaje' && (
+                                                        <span className="absolute right-2 text-gray-400 text-[10px]">%</span>
+                                                    )}
+                                                </div>
                                             </td>
-                                            <td className="p-2">
-                                                <select {...register(`items.${index}.tipo`)} className="w-full p-2 border border-transparent hover:border-gray-300 rounded bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-secondary text-xs">
+                                            <td className="p-1">
+                                                <select {...register(`items.${index}.tipo`)} className="w-full py-1.5 px-2 text-xs border border-transparent hover:border-gray-300 rounded bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-secondary">
                                                     <option value="remunerativo">Haberes</option>
                                                     <option value="deduccion">Deducción</option>
                                                     <option value="no_remunerativo">No Remun.</option>
                                                 </select>
                                             </td>
-                                            <td className="p-2">
+                                            <td className="p-1">
                                                 <div className="relative">
-                                                    <span className="absolute left-2 top-1.5 text-gray-400 text-xs">$</span>
+                                                    <span className="absolute left-2 top-1.5 text-gray-400 text-[10px]">$</span>
                                                     <input
                                                         type="number"
                                                         step="0.01"
                                                         {...register(`items.${index}.monto`, { required: true })}
-                                                        className={`w-full pl-6 pr-2 py-1.5 font-mono text-right border rounded focus:outline-none focus:ring-1 focus:ring-brand-secondary 
+                                                        className={`w-full pl-5 pr-2 py-1.5 text-xs font-mono text-right border rounded focus:outline-none focus:ring-1 focus:ring-brand-secondary 
                                                             ${items[index]?.tipo === 'deduccion' ? 'text-red-600 bg-red-50/30 border-red-100' : 'text-green-700 bg-green-50/30 border-green-100'}
                                                         `}
                                                     />
                                                 </div>
                                             </td>
-                                            <td className="p-2 text-center">
+                                            <td className="p-1 text-center">
                                                 <button
                                                     type="button"
                                                     onClick={() => remove(index)}
-                                                    className="p-1.5 text-gray-300 hover:text-red-500 rounded hover:bg-red-50 transition"
+                                                    className="p-1 text-gray-300 hover:text-red-500 rounded hover:bg-red-50 transition"
                                                 >
                                                     <Trash2 size={16} />
                                                 </button>

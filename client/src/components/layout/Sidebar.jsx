@@ -1,16 +1,28 @@
 import React from 'react';
 import { NavLink, Link } from 'react-router-dom';
-import { LayoutDashboard, Building, Users, FileText, Settings, X, Building2 } from 'lucide-react';
+import { LayoutDashboard, Building, Users, FileText, Settings, X, Building2, Settings2 } from 'lucide-react';
+import { useAppSelector } from '../../hooks/useRedux';
 import QuotaIndicator from '../dashboard/QuotaIndicator';
 
 const Sidebar = ({ isOpen, onClose }) => {
-    const navItems = [
+    const { activeCompany } = useAppSelector((state) => state.company);
+
+    const baseNavItems = [
         { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
         { name: 'Mis Empresas', path: '/dashboard/companies', icon: Building },
+    ];
+
+    const companyNavItems = activeCompany ? [
+        { name: 'Conceptos', path: '/dashboard/companies/concepts', icon: Settings2 },
         { name: 'Empleados', path: '/dashboard/employees', icon: Users },
         { name: 'Nuevo Recibo', path: '/dashboard/receipts/new', icon: FileText },
+    ] : [];
+
+    const footerNavItems = [
         { name: 'Configuración', path: '/dashboard/settings', icon: Settings },
     ];
+
+    const navItems = [...baseNavItems, ...companyNavItems, ...footerNavItems];
 
     const sidebarContent = (
         <div className="flex flex-col h-full bg-[#0F2C4C] text-white">

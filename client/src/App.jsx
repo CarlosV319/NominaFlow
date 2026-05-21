@@ -15,6 +15,7 @@ import ReceiptListPage from './pages/dashboard/ReceiptListPage';
 import ReceiptPreviewPage from './pages/dashboard/ReceiptPreviewPage';
 import DashboardHome from './pages/dashboard/DashboardHome';
 import SettingsPage from './pages/dashboard/SettingsPage';
+import CompanyConceptsPage from './pages/dashboard/CompanyConceptsPage';
 
 
 import HomePage from './pages/HomePage';
@@ -56,6 +57,7 @@ function App() {
           <Route path="/dashboard" element={<DashboardLayout />}>
             <Route index element={<DashboardHome />} />
             <Route path="companies" element={<CompanyListPage />} />
+            <Route path="companies/concepts" element={<CompanyConceptsPage />} />
             <Route path="employees" element={<EmployeeListPage />} />
             <Route path="employees/:id" element={<EmployeeDetailPage />} />
             <Route path="receipts" element={<ReceiptListPage />} />

@@ -27,6 +27,18 @@ export const createCompany = createAsyncThunk(
     }
 );
 
+export const updateCompany = createAsyncThunk(
+    'companies/update',
+    async ({ id, data }, { rejectWithValue }) => {
+        try {
+            const response = await api.put(`/companies/${id}`, data);
+            return response.data.data;
+        } catch (err) {
+            return rejectWithValue(err.response?.data?.message || 'Error al actualizar empresa');
+        }
+    }
+);
+
 export const deleteCompany = createAsyncThunk(
     'companies/delete',
     async (id, { rejectWithValue }) => {
@@ -97,6 +109,26 @@ const companySlice = createSlice({
                 state.companies.push(action.payload);
             })
             .addCase(createCompany.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            // Update Company
+            .addCase(updateCompany.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(updateCompany.fulfilled, (state, action) => {
+                state.loading = false;
+                const index = state.companies.findIndex(c => c._id === action.payload._id);
+                if (index !== -1) {
+                    state.companies[index] = action.payload;
+                }
+                if (state.activeCompany && state.activeCompany._id === action.payload._id) {
+                    state.activeCompany = action.payload;
+                    localStorage.setItem('activeCompany', JSON.stringify(action.payload));
+                }
+            })
+            .addCase(updateCompany.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             })

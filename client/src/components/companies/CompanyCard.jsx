@@ -13,15 +13,15 @@ const CompanyCard = ({ company, isActive, onSelect, onEdit, onDelete }) => {
         >
             {/* Active Badge */}
             {isActive && (
-                <div className="absolute -top-3 left-4 bg-brand-secondary text-white text-xs px-3 py-1 rounded-full font-bold shadow-sm flex items-center">
-                    <CheckCircle size={12} className="mr-1" /> Seleccionada
+                <div className="absolute -top-2.5 left-3 bg-brand-secondary text-white text-[9px] px-2 py-0.5 rounded-full font-bold shadow-sm flex items-center">
+                    <CheckCircle size={10} className="mr-1" /> Seleccionada
                 </div>
             )}
 
-            <div className="p-6">
+            <div className="p-4">
                 {/* Header with Title and Menu */}
-                <div className="flex justify-between items-start mb-4">
-                    <h3 className="text-xl font-bold text-gray-800 line-clamp-1" title={company.razonSocial}>
+                <div className="flex justify-between items-start mb-3">
+                    <h3 className="text-[12px] font-bold text-gray-800 line-clamp-1" title={company.razonSocial}>
                         {company.razonSocial}
                     </h3>
                     <div className="relative">
@@ -29,25 +29,25 @@ const CompanyCard = ({ company, isActive, onSelect, onEdit, onDelete }) => {
                             onClick={() => setShowMenu(!showMenu)}
                             className="p-1 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100"
                         >
-                            <MoreVertical size={20} />
+                            <MoreVertical size={14} />
                         </button>
 
                         {/* Dropdown Menu */}
                         {showMenu && (
                             <>
                                 <div className="fixed inset-0 z-10" onClick={() => setShowMenu(false)}></div>
-                                <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-xl border border-gray-100 py-1 z-20">
+                                <div className="absolute right-0 mt-1 w-28 bg-white rounded-lg shadow-xl border border-gray-100 py-1 z-20">
                                     <button
                                         onClick={() => { onEdit(company); setShowMenu(false); }}
-                                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center"
+                                        className="w-full text-left px-3 py-1.5 text-[10px] text-gray-700 hover:bg-gray-50 flex items-center"
                                     >
-                                        <Edit size={14} className="mr-2" /> Editar
+                                        <Edit size={12} className="mr-2" /> Editar
                                     </button>
                                     <button
                                         onClick={() => { onDelete(company._id); setShowMenu(false); }}
-                                        className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center"
+                                        className="w-full text-left px-3 py-1.5 text-[10px] text-red-600 hover:bg-red-50 flex items-center"
                                     >
-                                        <Trash2 size={14} className="mr-2" /> Borrar
+                                        <Trash2 size={12} className="mr-2" /> Borrar
                                     </button>
                                 </div>
                             </>
@@ -56,7 +56,7 @@ const CompanyCard = ({ company, isActive, onSelect, onEdit, onDelete }) => {
                 </div>
 
                 {/* Info List */}
-                <div className="space-y-2 text-sm text-gray-600 mb-6">
+                <div className="space-y-1.5 text-[10px] text-gray-600 mb-4">
                     <p><span className="font-semibold">CUIT:</span> {company.cuit}</p>
                     <p className="line-clamp-1" title={company.domicilio}>
                         <span className="font-semibold">Domicilio:</span> {company.domicilio}
@@ -67,7 +67,7 @@ const CompanyCard = ({ company, isActive, onSelect, onEdit, onDelete }) => {
                 <button
                     onClick={() => !isActive && onSelect(company)}
                     disabled={isActive}
-                    className={`w-full py-2.5 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center ${isActive
+                    className={`w-full py-1.5 text-[10px] rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center ${isActive
                             ? 'bg-gray-100 text-gray-400 cursor-default'
                             : 'bg-[#0F2C4C] text-white hover:bg-[#1e4570]'
                         }`}
