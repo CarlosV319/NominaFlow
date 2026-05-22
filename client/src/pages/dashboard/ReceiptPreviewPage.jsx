@@ -260,6 +260,16 @@ const ReceiptPreviewPage = () => {
                                 </div>
                             </div>
 
+                            {/* Transparencia Costo Laboral */}
+                            <div className="px-2 border-b border-slate-300 bg-[#FFF8F0] text-[7px] py-1 flex justify-between items-center text-slate-700">
+                                <span className="font-bold uppercase text-[#E85D04]">Costo Laboral Empleador (Dec 847/24)</span>
+                                <div className="flex gap-4">
+                                    <span>Aportes Retenidos: <span className="font-mono">{formatCurrency(receipt.totales.totalDescuentos)}</span></span>
+                                    <span>Contrib. Patronales: <span className="font-mono">{formatCurrency(receipt.contribucionesPatronales?.total || 0)}</span></span>
+                                    <span className="font-bold">Costo Total Empresa: <span className="font-mono">{formatCurrency(receipt.totales.totalBruto + (receipt.contribucionesPatronales?.total || 0))}</span></span>
+                                </div>
+                            </div>
+
                             <div className="grid grid-cols-2 gap-8 p-4 pt-8">
                                 <div className="border-t border-dashed border-slate-400 pt-1 text-center relative">
                                     <p className="text-[8px] font-bold uppercase text-slate-400">Firma del Empleador</p>
