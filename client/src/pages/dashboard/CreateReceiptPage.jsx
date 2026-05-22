@@ -26,6 +26,7 @@ const CreateReceiptPage = () => {
     // States for Employer Costs & Ganancias tracking
     const [contribucionesPatronales, setContribucionesPatronales] = useState(null);
     const [gananciasDetalle, setGananciasDetalle] = useState(null);
+    const [pendingConcepts, setPendingConcepts] = useState(null);
 
     // Initial Setup
     const { register, control, handleSubmit, setValue, watch, formState: { errors } } = useForm({
@@ -101,10 +102,50 @@ const CreateReceiptPage = () => {
         }
     }, [selectedEmployee, tipoLiquidacion, setValue]);
 
+    useEffect(() => {
+        if (!selectedEmployee || items.length === 0) return;
+
+        // Limites y alicuotas segun ley argentina
+        const TOPE_MAXIMA = 4303619.01;
+        let topeMax = TOPE_MAXIMA;
+        if (tipoLiquidacion === 'sac') {
+            topeMax = TOPE_MAXIMA * 0.5;
+        }
+
+        const baseCalculo = Math.min(totals.remunerativo, topeMax);
+        const brutoCompleto = selectedEmployee.sueldoBruto || 0;
+        const baseObraSocial = Math.max(baseCalculo, Math.min(brutoCompleto, topeMax));
+
+        items.forEach((item, index) => {
+            let expectedMonto = null;
+
+            if (item.codigo === '8100') { // Jubilación
+                expectedMonto = Math.round(baseCalculo * 0.11 * 100) / 100;
+            } else if (item.codigo === '8200') { // PAMI
+                expectedMonto = Math.round(baseCalculo * 0.03 * 100) / 100;
+            } else if (item.codigo === '8300') { // Obra Social
+                expectedMonto = Math.round(baseObraSocial * 0.03 * 100) / 100;
+            } else if (item.codigo === '8400' && selectedEmployee.cuotaSindical) { // Cuota Sindical
+                expectedMonto = Math.round(totals.remunerativo * (selectedEmployee.cuotaSindical / 100) * 100) / 100;
+            }
+
+            if (expectedMonto !== null && Number(item.monto) !== expectedMonto) {
+                setValue(`items.${index}.monto`, expectedMonto.toFixed(2));
+            }
+        });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [totals.remunerativo, selectedEmployee, tipoLiquidacion, setValue]);
+
+    const watchedPeriodo = watch('periodo');
+    const watchedEmployeeId = watch('employeeId');
+
 
     // Handlers
-    const handleLoadConcepts = async () => {
-        if (!selectedEmployee) return toast.error('Selecciona un empleado primero');
+    const handleLoadConcepts = async (quiet = false) => {
+        if (!selectedEmployee) {
+            if (!quiet) toast.error('Selecciona un empleado primero');
+            return;
+        }
 
         const formData = watch();
         const payload = {
@@ -137,38 +178,53 @@ const CreateReceiptPage = () => {
                     concepto: item.concepto,
                     unidades: 0,
                     tipo: key === 'sueldoProporcional' ? 'remunerativo' : 'no_remunerativo', // Depende del rubro pero simplificamos
-                    monto: item.monto
+                    monto: item.monto,
+                    selected: true
                 }));
                 
-                setValue('items', mappedItems);
-                toast.success('Liquidación Final calculada');
+                setPendingConcepts({ items: mappedItems, contribucionesPatronales: null, gananciasDetalle: null });
                 return;
             }
 
             if (res) {
-                setValue('items', res.items);
-                setContribucionesPatronales(res.contribucionesPatronales);
-                if (res.gananciasDetalle) {
-                    setGananciasDetalle(res.gananciasDetalle);
-                }
-                toast.success('Conceptos base calculados automáticamente');
+                const selectableItems = res.items.map(item => ({ ...item, selected: true }));
+                setPendingConcepts({
+                    items: selectableItems,
+                    contribucionesPatronales: res.contribucionesPatronales,
+                    gananciasDetalle: res.gananciasDetalle
+                });
             }
 
         } catch (err) {
             console.error(err);
-            toast.error('No se pudieron calcular los conceptos');
+            if (!quiet) toast.error('No se pudieron calcular los conceptos');
         }
     };
 
+    const handleConfirmConcepts = () => {
+        const selectedItems = pendingConcepts.items.filter(i => i.selected);
+        setValue('items', selectedItems);
+        if (pendingConcepts.contribucionesPatronales) {
+            setContribucionesPatronales(pendingConcepts.contribucionesPatronales);
+        }
+        if (pendingConcepts.gananciasDetalle) {
+            setGananciasDetalle(pendingConcepts.gananciasDetalle);
+        }
+        setPendingConcepts(null);
+        toast.success('Conceptos agregados al recibo');
+    };
+
     const onSubmit = async (data) => {
-        const formattedItems = data.items.map(item => ({
-            codigo: item.codigo,
-            concepto: item.concepto,
-            unidades: Number(item.unidades),
-            montoRemunerativo: item.tipo === 'remunerativo' ? Number(item.monto) : 0,
-            montoNoRemunerativo: item.tipo === 'no_remunerativo' ? Number(item.monto) : 0,
-            montoDeduccion: item.tipo === 'deduccion' ? Number(item.monto) : 0,
-        }));
+        const formattedItems = data.items
+            .filter(item => item.concepto && item.concepto.trim() !== '')
+            .map(item => ({
+                codigo: item.codigo || 'MANUAL',
+                concepto: item.concepto,
+                unidades: Number(item.unidades) || 0,
+                montoRemunerativo: item.tipo === 'remunerativo' ? Number(item.monto) : 0,
+                montoNoRemunerativo: item.tipo === 'no_remunerativo' ? Number(item.monto) : 0,
+                montoDeduccion: item.tipo === 'deduccion' ? Number(item.monto) : 0,
+            }));
 
         const payload = {
             employeeId: data.employeeId,
@@ -373,11 +429,27 @@ const CreateReceiptPage = () => {
                                             </td>
                                             <td className="p-1">
                                                 <div className="relative flex items-center">
-                                                    <input 
-                                                        {...register(`items.${index}.unidades`)} 
-                                                        className={`w-full py-1.5 px-2 text-xs border border-transparent hover:border-gray-300 rounded bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-secondary transition ${items[index]?.tipoCalculo === 'porcentaje' ? 'text-right pr-6' : 'text-center'}`} 
-                                                        placeholder="0" 
-                                                    />
+                                                    {(() => {
+                                                        const { onChange: regOnChange, ...restReg } = register(`items.${index}.unidades`);
+                                                        return (
+                                                            <input 
+                                                                {...restReg} 
+                                                                onChange={(e) => {
+                                                                    const newVal = parseFloat(e.target.value) || 0;
+                                                                    const currentUnidades = parseFloat(items[index]?.unidades) || 0;
+                                                                    const currentMonto = parseFloat(items[index]?.monto) || 0;
+                                                                    
+                                                                    if (currentUnidades > 0) {
+                                                                        const unitPrice = currentMonto / currentUnidades;
+                                                                        setValue(`items.${index}.monto`, (unitPrice * newVal).toFixed(2));
+                                                                    }
+                                                                    regOnChange(e);
+                                                                }}
+                                                                className={`w-full py-1.5 px-2 text-xs border border-transparent hover:border-gray-300 rounded bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-secondary transition ${items[index]?.tipoCalculo === 'porcentaje' ? 'text-right pr-6' : 'text-center'}`} 
+                                                                placeholder="0" 
+                                                            />
+                                                        );
+                                                    })()}
                                                     {items[index]?.tipoCalculo === 'porcentaje' && (
                                                         <span className="absolute right-2 text-gray-400 text-[10px]">%</span>
                                                     )}
@@ -504,6 +576,51 @@ const CreateReceiptPage = () => {
                 </div>
 
             </form>
+
+            {/* Modal de Selección de Conceptos */}
+            {pendingConcepts && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setPendingConcepts(null)}></div>
+                    <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
+                        <div className="flex items-center justify-between p-5 border-b border-gray-100 bg-gray-50">
+                            <h2 className="text-xl font-bold text-[#0F2C4C]">Seleccionar Conceptos a Liquidar</h2>
+                        </div>
+                        <div className="overflow-y-auto p-5 custom-scrollbar">
+                            <p className="text-xs text-gray-500 mb-4">Selecciona los conceptos que deseas incluir en este recibo:</p>
+                            <div className="space-y-2">
+                                {pendingConcepts.items.map((item, index) => (
+                                    <label key={index} className="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            checked={item.selected}
+                                            onChange={(e) => {
+                                                const newItems = [...pendingConcepts.items];
+                                                newItems[index].selected = e.target.checked;
+                                                setPendingConcepts({ ...pendingConcepts, items: newItems });
+                                            }}
+                                            className="w-4 h-4 text-brand-secondary rounded border-gray-300 focus:ring-brand-secondary"
+                                        />
+                                        <div className="ml-3 flex-1 flex justify-between">
+                                            <span className="text-sm font-semibold text-gray-800">{item.concepto}</span>
+                                            <span className={`text-sm font-bold ${item.tipo === 'deduccion' ? 'text-red-600' : 'text-green-600'}`}>
+                                                {item.tipo === 'deduccion' ? '-' : '+'}${Number(item.monto).toLocaleString()}
+                                            </span>
+                                        </div>
+                                    </label>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="flex gap-3 p-4 justify-end border-t border-gray-100">
+                            <button type="button" onClick={() => setPendingConcepts(null)} className="px-4 py-2 text-sm bg-gray-100 text-gray-700 font-semibold rounded-lg hover:bg-gray-200">
+                                Cancelar
+                            </button>
+                            <button type="button" onClick={handleConfirmConcepts} className="px-4 py-2 text-sm bg-[#0F2C4C] text-white font-semibold rounded-lg hover:bg-[#1e4570]">
+                                Confirmar Selección
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
