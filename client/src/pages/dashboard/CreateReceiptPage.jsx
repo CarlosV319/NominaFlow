@@ -38,6 +38,7 @@ const CreateReceiptPage = () => {
             },
             options: {
                 diasTrabajados: 30,
+                diasFeriados: 0,
                 horasExtra50: 0,
                 horasExtra100: 0,
                 incluirPresentismo: true,
@@ -258,6 +259,14 @@ const CreateReceiptPage = () => {
 
                             {tipoLiquidacion === 'mensual' && (
                                 <>
+                                    <div>
+                                        <label className="block text-[10px] font-medium text-gray-700 mb-1">Días Trab.</label>
+                                        <input type="number" {...register('options.diasTrabajados')} className="w-full p-1.5 border border-gray-300 rounded text-[10px] text-center" min="0" max="30" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] font-medium text-gray-700 mb-1">Feriados</label>
+                                        <input type="number" {...register('options.diasFeriados')} className="w-full p-1.5 border border-gray-300 rounded text-[10px] text-center" min="0" />
+                                    </div>
                                     <div>
                                         <label className="block text-[10px] font-medium text-gray-700 mb-1">Hs. Ext. 50%</label>
                                         <input type="number" {...register('options.horasExtra50')} className="w-full p-1.5 border border-gray-300 rounded text-[10px] text-center" min="0" />

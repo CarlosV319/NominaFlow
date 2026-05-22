@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, Link } from 'react-router-dom';
-import { LayoutDashboard, Building, Users, FileText, Settings, X, Building2, Settings2, ShieldCheck } from 'lucide-react';
+import { LayoutDashboard, Building, Users, FileText, Settings, X, Building2, Settings2, ShieldCheck, Calculator } from 'lucide-react';
 import { useAppSelector } from '../../hooks/useRedux';
 import QuotaIndicator from '../dashboard/QuotaIndicator';
 
@@ -25,6 +25,7 @@ const Sidebar = ({ isOpen, onClose }) => {
 
     if (user?.role === 'SUPERADMIN') {
         footerNavItems.push({ name: 'Admin SaaS', path: '/dashboard/superadmin', icon: ShieldCheck });
+        footerNavItems.push({ name: 'Fórmulas', path: '/dashboard/formulas', icon: Calculator });
     }
 
     const navItems = [...baseNavItems, ...companyNavItems, ...footerNavItems];

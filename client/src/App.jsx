@@ -17,6 +17,7 @@ import DashboardHome from './pages/dashboard/DashboardHome';
 import SettingsPage from './pages/dashboard/SettingsPage';
 import CompanyConceptsPage from './pages/dashboard/CompanyConceptsPage';
 import SuperAdminPage from './pages/dashboard/SuperAdminPage';
+import FormulasManagement from './pages/dashboard/FormulasManagement';
 
 
 import HomePage from './pages/HomePage';
@@ -66,6 +67,7 @@ function App() {
             <Route path="receipts/:id/preview" element={<ReceiptPreviewPage />} />
             <Route path="settings" element={<SettingsPage />} />
             <Route path="superadmin" element={<SuperAdminPage />} />
+            <Route path="formulas" element={<FormulasManagement />} />
           </Route>
 
           {/* Fallback */}

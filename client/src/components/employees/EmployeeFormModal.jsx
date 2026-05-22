@@ -3,6 +3,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { X } from 'lucide-react';
+import { Controller } from 'react-hook-form';
+import { NumericFormat } from 'react-number-format';
 import InputGroup from '../ui/InputGroup';
 
 const employeeSchema = z.object({
@@ -36,6 +38,7 @@ const employeeSchema = z.object({
 const EmployeeFormModal = ({ isOpen, onClose, onCreate, loading, activeCompanyId }) => {
     const {
         register,
+        control,
         handleSubmit,
         reset,
         formState: { errors, dirtyFields },
@@ -140,8 +143,30 @@ const EmployeeFormModal = ({ isOpen, onClose, onCreate, loading, activeCompanyId
                                         <option value="Eventual">Eventual</option>
                                     </select>
                                 </div>
-                                <div className="lg:col-span-1">
-                                    <InputGroup label="Bruto" name="sueldoBruto" type="number" step="0.01" register={register} error={errors.sueldoBruto} success={dirtyFields.sueldoBruto && !errors.sueldoBruto} />
+                                <div className="lg:col-span-1 mb-4">
+                                    <label className="block text-xs font-semibold text-gray-700 mb-1">Sueldo Pactado</label>
+                                    <Controller
+                                        name="sueldoBruto"
+                                        control={control}
+                                        render={({ field: { onChange, name, value } }) => (
+                                            <NumericFormat
+                                                className={`w-full px-4 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 transition-colors duration-200 ${errors.sueldoBruto ? 'border-red-500 focus:ring-red-200' : (dirtyFields.sueldoBruto && !errors.sueldoBruto) ? 'border-green-500 focus:ring-green-200' : 'border-gray-300 focus:border-brand-secondary focus:ring-brand-secondary/20'}`}
+                                                name={name}
+                                                value={value}
+                                                thousandSeparator="."
+                                                decimalSeparator=","
+                                                decimalScale={2}
+                                                fixedDecimalScale={true}
+                                                allowNegative={false}
+                                                onValueChange={(values) => {
+                                                    onChange(values.floatValue);
+                                                }}
+                                            />
+                                        )}
+                                    />
+                                    {errors.sueldoBruto && (
+                                        <span className="text-xs text-red-500 mt-1 block">{errors.sueldoBruto.message}</span>
+                                    )}
                                 </div>
                             </div>
                         </div>

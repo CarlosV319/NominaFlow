@@ -5,6 +5,7 @@ import employeeReducer from './slices/employeeSlice';
 import receiptReducer from './slices/receiptSlice';
 
 import adminReducer from './slices/adminSlice';
+import formulaReducer from './slices/formulaSlice';
 
 export const store = configureStore({
     reducer: {
@@ -13,6 +14,7 @@ export const store = configureStore({
         employee: employeeReducer,
         receipt: receiptReducer,
         admin: adminReducer,
+        formulas: formulaReducer,
     },
     devTools: process.env.NODE_ENV !== 'production',
 });
