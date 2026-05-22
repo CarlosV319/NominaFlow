@@ -1,16 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks/useRedux';
 import { updateCompany } from '../../store/slices/companySlice';
-import { ArrowLeft, Plus, Save, Trash2 } from 'lucide-react';
+import { ArrowLeft, Plus, Save, Trash2, Download, Crown } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
+import { useSubscription } from '../../hooks/useSubscription';
+import UpgradeModal from '../../components/modals/UpgradeModal';
+import api from '../../api/axios';
 
 const CompanyConceptsPage = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const { activeCompany, loading } = useAppSelector((state) => state.company);
+    const { plan } = useSubscription();
 
     const [conceptos, setConceptos] = useState([]);
+    const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+    const [isExporting, setIsExporting] = useState(false);
 
     useEffect(() => {
         if (!activeCompany) {
@@ -75,6 +81,40 @@ const CompanyConceptsPage = () => {
         }
     };
 
+    const handleExportLSD = async () => {
+        if (!plan || plan === 'INICIAL') {
+            setShowUpgradeModal(true);
+            return;
+        }
+
+        try {
+            setIsExporting(true);
+            const response = await api.get(`/lsd/concepts/export/${activeCompany._id}`, {
+                responseType: 'blob'
+            });
+
+            // Create blob link to download
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `Conceptos_LSD_${activeCompany.cuit}.txt`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            
+            toast.success('Archivo descargado correctamente');
+        } catch (error) {
+            console.error('Error exporting LSD:', error);
+            if (error.response?.status === 403) {
+                setShowUpgradeModal(true);
+            } else {
+                toast.error('Ocurrió un error al generar el archivo TXT');
+            }
+        } finally {
+            setIsExporting(false);
+        }
+    };
+
     if (!activeCompany) return null;
 
     return (
@@ -92,12 +132,26 @@ const CompanyConceptsPage = () => {
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div className="p-4 border-b border-slate-200 flex justify-between items-center bg-gray-50">
                     <h2 className="font-bold text-[12px] text-slate-800">Lista de Conceptos</h2>
-                    <button
-                        onClick={handleAddConcept}
-                        className="flex items-center gap-1.5 bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition font-medium text-[10px] border border-indigo-200"
-                    >
-                        <Plus size={12} /> Añadir Concepto
-                    </button>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={handleExportLSD}
+                            disabled={isExporting || conceptos.length === 0}
+                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition font-medium text-[10px] border
+                                ${(!plan || plan === 'INICIAL') 
+                                    ? 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100' 
+                                    : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'}
+                                disabled:opacity-50`}
+                        >
+                            {(!plan || plan === 'INICIAL') ? <Crown size={12} className="text-amber-500" /> : <Download size={12} />}
+                            {isExporting ? 'Generando...' : 'Exportar a AFIP (LSD)'}
+                        </button>
+                        <button
+                            onClick={handleAddConcept}
+                            className="flex items-center gap-1.5 bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition font-medium text-[10px] border border-indigo-200"
+                        >
+                            <Plus size={12} /> Añadir Concepto
+                        </button>
+                    </div>
                 </div>
 
                 <div className="p-6">
@@ -188,6 +242,11 @@ const CompanyConceptsPage = () => {
                     </button>
                 </div>
             </div>
+
+            <UpgradeModal 
+                isOpen={showUpgradeModal} 
+                onClose={() => setShowUpgradeModal(false)} 
+            />
         </div>
     );
 };

@@ -43,6 +43,7 @@ export const plans = [
             'Historial de 1 Año',
             'Sin marca de agua',
             'Descarga Original/Duplicado',
+            'Exportación a AFIP (LSD TXT)',
             'Soporte por Email'
         ],
         buttonText: 'Elegir Plan',
@@ -95,6 +96,7 @@ export const plans = [
             'Hasta 2.000 Recibos/mes',
             'Historial Permanente',
             'Marca Blanca (Tu Logo)',
+            'Exportación a AFIP (LSD TXT)',
             'Acceso a API',
             'Soporte Prioritario (WhatsApp)'
         ],

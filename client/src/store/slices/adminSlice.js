@@ -16,6 +16,20 @@ export const fetchUsers = createAsyncThunk(
     }
 );
 
+export const fetchAnalytics = createAsyncThunk(
+    'admin/fetchAnalytics',
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await api.get('/admin/analytics');
+            return response.data.data;
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data?.message || 'Error al cargar analíticas'
+            );
+        }
+    }
+);
+
 export const updateUserAsAdmin = createAsyncThunk(
     'admin/updateUser',
     async ({ id, data }, { rejectWithValue }) => {
@@ -46,6 +60,7 @@ export const deleteUserAsAdmin = createAsyncThunk(
 
 const initialState = {
     users: [],
+    analytics: null,
     loading: false,
     error: null,
 };
@@ -70,6 +85,19 @@ const adminSlice = createSlice({
                 state.users = action.payload;
             })
             .addCase(fetchUsers.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            // fetchAnalytics
+            .addCase(fetchAnalytics.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(fetchAnalytics.fulfilled, (state, action) => {
+                state.loading = false;
+                state.analytics = action.payload;
+            })
+            .addCase(fetchAnalytics.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             })

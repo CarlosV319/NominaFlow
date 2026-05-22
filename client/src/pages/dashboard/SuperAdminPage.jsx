@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks/useRedux';
-import { fetchUsers, updateUserAsAdmin, deleteUserAsAdmin } from '../../store/slices/adminSlice';
-import { Users, Shield, CreditCard, Trash2, Edit2, ShieldCheck, Mail, Save, X, Settings } from 'lucide-react';
+import { fetchUsers, updateUserAsAdmin, deleteUserAsAdmin, fetchAnalytics } from '../../store/slices/adminSlice';
+import { Users, Shield, CreditCard, Trash2, Edit2, ShieldCheck, Mail, Save, X, Settings, TrendingUp, Building2, FileText } from 'lucide-react';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Legend } from 'recharts';
 import { toast } from 'react-hot-toast';
 import { Navigate } from 'react-router-dom';
 
 const SuperAdminPage = () => {
     const dispatch = useAppDispatch();
-    const { users, loading, error } = useAppSelector((state) => state.admin);
+    const { users, analytics, loading, error } = useAppSelector((state) => state.admin);
     const { user: currentUser } = useAppSelector((state) => state.auth);
 
     const [editingUser, setEditingUser] = useState(null);
@@ -17,22 +18,50 @@ const SuperAdminPage = () => {
         role: ''
     });
 
+    const [filters, setFilters] = useState({
+        search: '',
+        plan: '',
+        role: '',
+        status: ''
+    });
+
     useEffect(() => {
         if (currentUser?.role === 'SUPERADMIN') {
             dispatch(fetchUsers());
+            dispatch(fetchAnalytics());
         }
-    }, [dispatch, currentUser]);
+    }, [dispatch, currentUser?.role]);
 
     if (currentUser?.role !== 'SUPERADMIN') {
         return <Navigate to="/dashboard" replace />;
     }
 
+    const filteredUsers = (users || []).filter(user => {
+        const searchVal = filters.search.toLowerCase();
+        const matchesSearch = filters.search === '' || 
+            user.email?.toLowerCase().includes(searchVal) || 
+            user.firstName?.toLowerCase().includes(searchVal) || 
+            user.lastName?.toLowerCase().includes(searchVal);
+            
+        const matchesPlan = filters.plan === '' || user.plan === filters.plan;
+        const matchesRole = filters.role === '' || user.role === filters.role;
+        const matchesStatus = filters.status === '' || user.subscriptionStatus === filters.status;
+
+        return matchesSearch && matchesPlan && matchesRole && matchesStatus;
+    });
+
     const handleEditClick = (user) => {
         setEditingUser(user);
+        
+        let safeRole = user.role;
+        if (!['ADMIN', 'ACCOUNTANT', 'SUPERADMIN'].includes(safeRole)) {
+            safeRole = 'ADMIN';
+        }
+
         setEditForm({
             plan: user.plan || 'INICIAL',
             subscriptionStatus: user.subscriptionStatus || 'ACTIVE',
-            role: user.role || 'ADMIN'
+            role: safeRole
         });
     };
 
@@ -51,6 +80,8 @@ const SuperAdminPage = () => {
             try {
                 await dispatch(deleteUserAsAdmin(id)).unwrap();
                 toast.success('Usuario eliminado');
+                // Forzar actualización de las gráficas al eliminar
+                dispatch(fetchAnalytics());
             } catch (err) {
                 toast.error(err || 'Error al eliminar');
             }
@@ -94,6 +125,144 @@ const SuperAdminPage = () => {
                 </div>
             )}
 
+            {/* KPIs */}
+            {analytics && (
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center gap-4">
+                        <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center">
+                            <Users size={20} />
+                        </div>
+                        <div>
+                            <p className="text-[10px] uppercase font-bold text-slate-500">Usuarios Totales</p>
+                            <h3 className="text-2xl font-bold text-slate-800">{analytics.totals.users}</h3>
+                        </div>
+                    </div>
+                    <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center gap-4">
+                        <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center">
+                            <FileText size={20} />
+                        </div>
+                        <div>
+                            <p className="text-[10px] uppercase font-bold text-slate-500">Recibos Emitidos</p>
+                            <h3 className="text-2xl font-bold text-slate-800">{analytics.totals.receipts}</h3>
+                        </div>
+                    </div>
+                    <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center gap-4">
+                        <div className="w-12 h-12 bg-orange-50 text-orange-600 rounded-full flex items-center justify-center">
+                            <Users size={20} />
+                        </div>
+                        <div>
+                            <p className="text-[10px] uppercase font-bold text-slate-500">Empleados (Nómina)</p>
+                            <h3 className="text-2xl font-bold text-slate-800">{analytics.totals.employees}</h3>
+                        </div>
+                    </div>
+                    <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center gap-4">
+                        <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-full flex items-center justify-center">
+                            <Building2 size={20} />
+                        </div>
+                        <div>
+                            <p className="text-[10px] uppercase font-bold text-slate-500">Empresas</p>
+                            <h3 className="text-2xl font-bold text-slate-800">{analytics.totals.companies}</h3>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Charts */}
+            {analytics && (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                        <h3 className="text-[12px] font-bold text-slate-800 mb-4 flex items-center gap-2">
+                            <TrendingUp size={16} className="text-blue-500"/> Crecimiento de Usuarios y Empleados
+                        </h3>
+                        <div className="h-64 w-full text-[10px]">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <LineChart data={analytics.chartData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9"/>
+                                    <XAxis dataKey="name" axisLine={false} tickLine={false} />
+                                    <YAxis axisLine={false} tickLine={false} />
+                                    <RechartsTooltip contentStyle={{ borderRadius: '8px', fontSize: '10px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}/>
+                                    <Legend iconType="circle"/>
+                                    <Line type="monotone" name="Usuarios" dataKey="usuarios" stroke="#3b82f6" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }}/>
+                                    <Line type="monotone" name="Empleados" dataKey="empleados" stroke="#f97316" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }}/>
+                                </LineChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </div>
+
+                    <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                        <h3 className="text-[12px] font-bold text-slate-800 mb-4 flex items-center gap-2">
+                            <FileText size={16} className="text-emerald-500"/> Volumen de Recibos Emitidos
+                        </h3>
+                        <div className="h-64 w-full text-[10px]">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={analytics.chartData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9"/>
+                                    <XAxis dataKey="name" axisLine={false} tickLine={false} />
+                                    <YAxis axisLine={false} tickLine={false} />
+                                    <RechartsTooltip cursor={{ fill: '#f8fafc' }} contentStyle={{ borderRadius: '8px', fontSize: '10px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}/>
+                                    <Legend iconType="circle"/>
+                                    <Bar dataKey="recibos" name="Recibos" fill="#10b981" radius={[4, 4, 0, 0]} barSize={32} />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Filters */}
+            <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 mb-6 flex flex-wrap gap-4 items-end">
+                <div className="flex-1 min-w-[200px]">
+                    <label className="block text-[10px] font-bold text-slate-700 mb-1">Buscar Usuario</label>
+                    <input 
+                        type="text" 
+                        placeholder="Nombre o email..."
+                        className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-brand-primary outline-none text-[10px]"
+                        value={filters.search}
+                        onChange={e => setFilters({...filters, search: e.target.value})}
+                    />
+                </div>
+                <div className="w-full sm:w-32">
+                    <label className="block text-[10px] font-bold text-slate-700 mb-1">Plan</label>
+                    <select 
+                        className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-brand-primary outline-none text-[10px]"
+                        value={filters.plan}
+                        onChange={e => setFilters({...filters, plan: e.target.value})}
+                    >
+                        <option value="">Todos</option>
+                        <option value="INICIAL">INICIAL</option>
+                        <option value="PROFESIONAL">PROFESIONAL</option>
+                        <option value="ESTUDIO">ESTUDIO</option>
+                        <option value="CORPORATE">CORPORATE</option>
+                    </select>
+                </div>
+                <div className="w-full sm:w-32">
+                    <label className="block text-[10px] font-bold text-slate-700 mb-1">Rol</label>
+                    <select 
+                        className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-brand-primary outline-none text-[10px]"
+                        value={filters.role}
+                        onChange={e => setFilters({...filters, role: e.target.value})}
+                    >
+                        <option value="">Todos</option>
+                        <option value="ADMIN">ADMIN</option>
+                        <option value="ACCOUNTANT">ACCOUNTANT</option>
+                        <option value="SUPERADMIN">SUPERADMIN</option>
+                    </select>
+                </div>
+                <div className="w-full sm:w-32">
+                    <label className="block text-[10px] font-bold text-slate-700 mb-1">Estado</label>
+                    <select 
+                        className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-brand-primary outline-none text-[10px]"
+                        value={filters.status}
+                        onChange={e => setFilters({...filters, status: e.target.value})}
+                    >
+                        <option value="">Todos</option>
+                        <option value="ACTIVE">ACTIVE</option>
+                        <option value="PAST_DUE">PAST_DUE</option>
+                        <option value="CANCELED">CANCELED</option>
+                    </select>
+                </div>
+            </div>
+
             {/* Users Table */}
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div className="overflow-x-auto">
@@ -104,21 +273,23 @@ const SuperAdminPage = () => {
                                 <th className="p-3 font-bold text-center">Rol</th>
                                 <th className="p-3 font-bold text-center">Plan</th>
                                 <th className="p-3 font-bold text-center">Estado</th>
-                                <th className="p-3 font-bold text-center">Uso (Emp/Rec)</th>
+                                <th className="p-3 font-bold text-center">Empresas</th>
+                                <th className="p-3 font-bold text-center">Empleados</th>
+                                <th className="p-3 font-bold text-center">Recibos</th>
                                 <th className="p-3 font-bold text-center">Acciones</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
                             {loading ? (
                                 <tr>
-                                    <td colSpan="6" className="p-8 text-center text-slate-500 text-[10px]">Cargando usuarios...</td>
+                                    <td colSpan="8" className="p-8 text-center text-slate-500 text-[10px]">Cargando usuarios...</td>
                                 </tr>
-                            ) : (users || []).length === 0 ? (
+                            ) : filteredUsers.length === 0 ? (
                                 <tr>
-                                    <td colSpan="6" className="p-8 text-center text-slate-500 text-[10px]">No hay usuarios registrados.</td>
+                                    <td colSpan="8" className="p-8 text-center text-slate-500 text-[10px]">No se encontraron usuarios con esos filtros.</td>
                                 </tr>
                             ) : (
-                                (users || []).map(user => (
+                                filteredUsers.map(user => (
                                     <tr key={user._id} className="hover:bg-slate-50 transition">
                                         <td className="p-3">
                                             <div className="flex items-center gap-2">
@@ -149,8 +320,14 @@ const SuperAdminPage = () => {
                                                 {user.subscriptionStatus}
                                             </span>
                                         </td>
-                                        <td className="p-3 text-center text-[10px] text-slate-600 font-mono">
-                                            {user.stats?.companies || 0} E / {user.stats?.receipts || 0} R
+                                        <td className="p-3 text-center text-[11px] text-slate-700 font-bold">
+                                            {user.stats?.companies || 0}
+                                        </td>
+                                        <td className="p-3 text-center text-[11px] text-slate-700 font-bold">
+                                            {user.stats?.employees || 0}
+                                        </td>
+                                        <td className="p-3 text-center text-[11px] text-slate-700 font-bold">
+                                            {user.stats?.receipts || 0}
                                         </td>
                                         <td className="p-3 text-center">
                                             <div className="flex items-center justify-center gap-2">

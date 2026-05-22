@@ -3,18 +3,23 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAppSelector } from '../../hooks/useRedux';
 import api from '../../api/axios';
-import { ArrowLeft, Download, Printer } from 'lucide-react';
+import { ArrowLeft, Download, Printer, Crown } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import { useSubscription } from '../../hooks/useSubscription';
+import UpgradeModal from '../../components/modals/UpgradeModal';
 import { formatCurrency, numberToWords } from '../../utils/formatters';
 
 const ReceiptPreviewPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const { activeCompany } = useAppSelector((state) => state.company);
+    const { plan } = useSubscription();
 
     const [receipt, setReceipt] = useState(null);
     const [loading, setLoading] = useState(true);
     const [pdfLoading, setPdfLoading] = useState(false);
+    const [isExportingLSD, setIsExportingLSD] = useState(false);
+    const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
     useEffect(() => {
         const fetchReceiptData = async () => {
@@ -81,6 +86,40 @@ const ReceiptPreviewPage = () => {
     const handlePrint = async () => {
         // Use backend PDF generation for "Print" as well, it ensures the same output as Download
         await handleDownloadPDF();
+    };
+
+    const handleExportLSD = async () => {
+        if (!plan || plan === 'INICIAL') {
+            setShowUpgradeModal(true);
+            return;
+        }
+
+        try {
+            setIsExportingLSD(true);
+            const response = await api.get(`/lsd/liquidations/export/receipt/${id}`, {
+                responseType: 'blob'
+            });
+
+            // Create blob link to download
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `Recibo_LSD_${receipt?.employeeSnapshot?.cuil || id}.txt`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            
+            toast.success('Archivo descargado correctamente');
+        } catch (error) {
+            console.error('Error exporting LSD:', error);
+            if (error.response?.status === 403) {
+                setShowUpgradeModal(true);
+            } else {
+                toast.error('Ocurrió un error al generar el archivo TXT');
+            }
+        } finally {
+            setIsExportingLSD(false);
+        }
     };
 
     // Helper component for the receipt content
@@ -254,12 +293,23 @@ const ReceiptPreviewPage = () => {
 
                 <div className="flex gap-3">
                     <button
+                        onClick={handleExportLSD}
+                        disabled={isExportingLSD}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-lg transition font-medium border shadow-sm
+                            ${(!plan || plan === 'INICIAL') 
+                                ? 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100' 
+                                : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'}
+                            disabled:opacity-50`}
+                    >
+                        {(!plan || plan === 'INICIAL') ? <Crown size={18} className="text-amber-500" /> : <Download size={18} />}
+                        {isExportingLSD ? 'Generando...' : 'Exportar a AFIP'}
+                    </button>
+                    <button
                         onClick={handlePrint}
                         className="flex items-center gap-2 px-4 py-2 bg-[#0F2C4C] text-white rounded-lg hover:bg-[#1a4b80] transition font-medium shadow-md"
                     >
                         <Printer size={18} /> Imprimir
                     </button>
-                    {/* Reuse PDF download logic if needed, or just rely on Print to PDF */}
                 </div>
             </div>
 
@@ -307,6 +357,11 @@ const ReceiptPreviewPage = () => {
                     }
                 }
             `}</style>
+            
+            <UpgradeModal 
+                isOpen={showUpgradeModal} 
+                onClose={() => setShowUpgradeModal(false)} 
+            />
         </div>
     );
 };
