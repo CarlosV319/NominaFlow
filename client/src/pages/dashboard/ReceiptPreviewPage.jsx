@@ -267,12 +267,22 @@ const ReceiptPreviewPage = () => {
                                 <span><strong className="uppercase">Último Aporte Jubilatorio (Ley 17.250):</strong> Período: {receipt.ultimoAporteJubilatorio?.periodo || '-'} | Fecha: {receipt.ultimoAporteJubilatorio?.fecha || '-'} | Banco: {receipt.ultimoAporteJubilatorio?.banco || '-'}</span>
                             </div>
 
+                            {/* FAL (Fondo de Asistencia Laboral) */}
+                            {receipt.falDetalle && receipt.falDetalle.coberturaFAL > 0 && (
+                                <div className="px-2 py-[2px] border-b border-slate-300 bg-indigo-50 text-[6.5px] text-indigo-800 flex justify-between">
+                                    <span><strong className="uppercase">Fondo de Asistencia Laboral (FAL):</strong> Cobertura Indemnización: {formatCurrency(receipt.falDetalle.coberturaFAL)} | Diferencia a cargo empleador: {formatCurrency(receipt.falDetalle.diferenciaEmpleadorArt245)} | Meses de aporte: {receipt.falDetalle.mesesAportados}</span>
+                                </div>
+                            )}
+
                             {/* Transparencia Costo Laboral */}
                             <div className="px-2 border-b border-slate-300 bg-[#FFF8F0] text-[7px] py-1 flex justify-between items-center text-slate-700">
                                 <span className="font-bold uppercase text-[#E85D04]">Costo Laboral Empleador (Dec 847/24)</span>
                                 <div className="flex gap-4">
                                     <span>Aportes Retenidos: <span className="font-mono">{formatCurrency(receipt.totales.totalDescuentos)}</span></span>
                                     <span>Contrib. Patronales: <span className="font-mono">{formatCurrency(receipt.contribucionesPatronales?.total || 0)}</span></span>
+                                    {receipt.contribucionesPatronales?.reduccionFAL > 0 && (
+                                        <span className="text-emerald-600 font-bold">Reducción FAL: <span className="font-mono">-{formatCurrency(receipt.contribucionesPatronales.reduccionFAL)}</span></span>
+                                    )}
                                     <span className="font-bold">Costo Total Empresa: <span className="font-mono">{formatCurrency(receipt.totales.totalBruto + (receipt.contribucionesPatronales?.total || 0))}</span></span>
                                 </div>
                             </div>

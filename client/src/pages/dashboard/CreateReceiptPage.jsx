@@ -26,6 +26,7 @@ const CreateReceiptPage = () => {
     // States for Employer Costs & Ganancias tracking
     const [contribucionesPatronales, setContribucionesPatronales] = useState(null);
     const [gananciasDetalle, setGananciasDetalle] = useState(null);
+    const [falDetalle, setFalDetalle] = useState(null);
     const [pendingConcepts, setPendingConcepts] = useState(null);
 
     // Initial Setup
@@ -182,7 +183,12 @@ const CreateReceiptPage = () => {
                     selected: true
                 }));
                 
-                setPendingConcepts({ items: mappedItems, contribucionesPatronales: null, gananciasDetalle: null });
+                setPendingConcepts({ 
+                    items: mappedItems, 
+                    contribucionesPatronales: null, 
+                    gananciasDetalle: null,
+                    falDetalle: finalRes.fal || null
+                });
                 return;
             }
 
@@ -210,6 +216,11 @@ const CreateReceiptPage = () => {
         if (pendingConcepts.gananciasDetalle) {
             setGananciasDetalle(pendingConcepts.gananciasDetalle);
         }
+        if (pendingConcepts.falDetalle) {
+            // Se puede guardar en un state o simplemente saber que al darle onSubmit se envia
+            // Vamos a agregar falDetalle al form o state
+            setFalDetalle(pendingConcepts.falDetalle);
+        }
         setPendingConcepts(null);
         toast.success('Conceptos agregados al recibo');
     };
@@ -235,7 +246,8 @@ const CreateReceiptPage = () => {
             tipoLiquidacion: data.tipoLiquidacion,
             items: formattedItems,
             contribucionesPatronales,
-            gananciasDetalle
+            gananciasDetalle,
+            falDetalle: falDetalle || undefined
         };
 
         try {
