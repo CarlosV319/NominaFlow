@@ -3,10 +3,11 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAppSelector } from '../../hooks/useRedux';
 import api from '../../api/axios';
-import { ArrowLeft, Download, Printer, Crown } from 'lucide-react';
+import { ArrowLeft, Download, Printer, Crown, PenTool } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useSubscription } from '../../hooks/useSubscription';
 import UpgradeModal from '../../components/modals/UpgradeModal';
+import SignatureModal from '../../components/modals/SignatureModal';
 import { formatCurrency, numberToWords } from '../../utils/formatters';
 
 const ReceiptPreviewPage = () => {
@@ -20,6 +21,7 @@ const ReceiptPreviewPage = () => {
     const [pdfLoading, setPdfLoading] = useState(false);
     const [isExportingLSD, setIsExportingLSD] = useState(false);
     const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+    const [showSignatureModal, setShowSignatureModal] = useState(false);
 
     useEffect(() => {
         const fetchReceiptData = async () => {
@@ -260,6 +262,11 @@ const ReceiptPreviewPage = () => {
                                 </div>
                             </div>
 
+                            {/* Ultimo Aporte Jubilatorio */}
+                            <div className="px-2 py-[2px] border-b border-slate-300 bg-white text-[6px] text-slate-500 flex justify-between">
+                                <span><strong className="uppercase">Último Aporte Jubilatorio (Ley 17.250):</strong> Período: {receipt.ultimoAporteJubilatorio?.periodo || '-'} | Fecha: {receipt.ultimoAporteJubilatorio?.fecha || '-'} | Banco: {receipt.ultimoAporteJubilatorio?.banco || '-'}</span>
+                            </div>
+
                             {/* Transparencia Costo Laboral */}
                             <div className="px-2 border-b border-slate-300 bg-[#FFF8F0] text-[7px] py-1 flex justify-between items-center text-slate-700">
                                 <span className="font-bold uppercase text-[#E85D04]">Costo Laboral Empleador (Dec 847/24)</span>
@@ -320,6 +327,18 @@ const ReceiptPreviewPage = () => {
                     >
                         <Printer size={18} /> Imprimir
                     </button>
+                    {!receipt?.firmaTrabajador ? (
+                        <button
+                            onClick={() => setShowSignatureModal(true)}
+                            className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition font-medium shadow-md"
+                        >
+                            <PenTool size={18} /> Firmar Legalmente
+                        </button>
+                    ) : (
+                        <div className="flex items-center gap-2 px-4 py-2 bg-emerald-100 text-emerald-800 rounded-lg font-bold border border-emerald-300">
+                            <PenTool size={18} /> Firmado Digitalmente
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -371,6 +390,13 @@ const ReceiptPreviewPage = () => {
             <UpgradeModal 
                 isOpen={showUpgradeModal} 
                 onClose={() => setShowUpgradeModal(false)} 
+            />
+            
+            <SignatureModal
+                isOpen={showSignatureModal}
+                onClose={() => setShowSignatureModal(false)}
+                receiptId={id}
+                onSignSuccess={(updatedReceipt) => setReceipt(updatedReceipt)}
             />
         </div>
     );
